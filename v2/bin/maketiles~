@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# i = id
+# f = tiff file
+# e = email
+
+TEMP=$(getopt -o i:f:e:  --long id:,file:,email: -n 'maketiles' -- "$@")
+eval set -- "$TEMP"
+
+while true
+do
+    case "$1" in
+	-i|--id)
+	    ID=$2
+	    shift 2
+	    ;;
+	-f|--file)
+	    FILE=$2
+	    shift 2
+	    ;;
+	-e|--email)
+	    EMAIL=$2
+	    shift 2
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+    esac
+done
+
+BASEPATH=/var/gis/users/geolayers/geolayers/v2/tiles/${ID}
+
+mkdir -p ${BASEPATH}
+
+STARTFILE="${BASEPATH}/START.GL8"
+ENDFILE="${BASEPATH}/END.GL8"
+STATFILE="${BASEPATH}/STAT.GL8"
+IDFILE="${BASEPATH}/ID.GL8"
+
+echo ${ID} > ${IDFILE}
+
+echo "Generating tiles" > ${STATFILE}
+
+date > ${STARTFILE}
+
+/usr/bin/gdal2tiles.py -w none ${FILE} ${BASEPATH}
+
+date > ${ENDFILE}
+
+echo "Completed" > ${STATFILE}
+
+
+exit 0
+
+mailx -a 'Content-Type: text/html' -r 'geolayers@geodigraph.com (GeoLayers 2018)' -s "GeoLayers 2018: ${TITLE}" "${EMAIL}" <<EOF
+
+<html>
+<head>
+<style>
+</style>
+</head>
+<body>
+<center><img src="http://geolayers.geodigraph.com/images/geodigraph.png"></center>
+
+<h1>Your imagery is ready!</h1>
+<a href="${URL}">${TITLE}</a>
+</body>
+</html>
+
+EOF

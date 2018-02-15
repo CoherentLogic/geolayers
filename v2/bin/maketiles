@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# i = id
+# f = tiff file
+# e = email
+
+TEMP=$(getopt -o i:f:e:  --long id:,file:,email: -n 'maketiles' -- "$@")
+eval set -- "$TEMP"
+
+while true
+do
+    case "$1" in
+	-i|--id)
+	    ID=$2
+	    shift 2
+	    ;;
+	-f|--file)
+	    FILE=$2
+	    shift 2
+	    ;;
+	-e|--email)
+	    EMAIL=$2
+	    shift 2
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+    esac
+done
+
+BASEPATH=/var/gis/users/geolayers/geolayers/v2/tiles/${ID}
+
+mkdir -p ${BASEPATH}
+
+STARTFILE="${BASEPATH}/START.GL8"
+ENDFILE="${BASEPATH}/END.GL8"
+STATFILE="${BASEPATH}/STAT.GL8"
+IDFILE="${BASEPATH}/ID.GL8"
+
+echo ${ID} > ${IDFILE}
+
+echo "Post-Processing" > ${STATFILE}
+
+date > ${STARTFILE}
+
+/usr/bin/gdal2tiles.py -w none ${FILE} ${BASEPATH}
+
+date > ${ENDFILE}
+
+echo "Completed" > ${STATFILE}
+
+wget "https://geolayers.geodigraph.com/v2/modules/complete_layer.cfm?layerid=${ID}" > /dev/null
