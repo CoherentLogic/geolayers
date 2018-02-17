@@ -40,11 +40,28 @@
             setLayerRefresh(user.email);
         }
 
+        notification = new Notification({
+            caption: form.baseLayerName & " is ready",
+            message: "A new base layer, " & form.baseLayerName & ", has been added to your personal layers display.",
+            link: "https://geolayers.geodigraph.com/v2/default.cfm?showLayer=#form.baseLayerId#",
+            icon: "fa-map"
+        });
+
+        notification.send(getNotifyTargets(form.baseLayerId));
     }
 
     if(isDefined("form.addBaseToMyPersonal")) {
         addLayerToUser(form.baseLayerId, session.email, 1, 100, 1);
-        setLayerRefresh(session.email);                         
+        setLayerRefresh(session.email);   
+
+        notification = new Notification({
+            caption: form.baseLayerName & " is ready",
+            message: "A new base layer, " & form.baseLayerName & ", has been added to your personal layers display.",
+            link: "https://geolayers.geodigraph.com/v2/default.cfm?showLayer=#form.baseLayerId#",
+            icon: "fa-map"
+        });
+
+        notification.send([{email: session.email}]);                      
     }    
 
     if(isDefined("form.addBaseToAllNewAccounts")) {

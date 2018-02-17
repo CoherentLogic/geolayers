@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>GeoLayers 2018 | Login</title>
+    <title>Geodigraph GIS 2018 | Login</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -41,6 +41,8 @@
                     session.zip = account.zip;
                     session.loggedIn = true;
 
+                    session.admin = account.admin;
+
                     session.account = account;
 
                     if(isDefined("form.showLayer")) {
@@ -70,7 +72,7 @@
                     <h1 class="logo-name"><img src="img/login-header.png"></h1>
 
                 </div>
-                <h3>GeoLayers 2018</h3>
+                <h3>Geodigraph GIS 2018</h3>
                 
                 <span style="color:red;"><cfoutput>#errorMessage#</cfoutput></span>
                 

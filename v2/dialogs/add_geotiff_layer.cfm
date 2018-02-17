@@ -30,23 +30,28 @@
 
                         <div class="radio"><label><input type="radio" name="addGeoTiffTo" value="existingUser"> Existing user <select name="geoTiffExistingUsers" id="geoTiffExistingUsers" size="1"></select></label></div>
 
-                        <div class="radio"><label><input type="radio" name="addGeoTiffTo" value="existingCompany"> Existing company <select name="geoTiffExistingCompanies" id="geoTiffExistingCompanies" size="1"></select></label></div>
-
+                        <cfif session.admin>
+                            <div class="radio"><label><input type="radio" name="addGeoTiffTo" value="existingCompany"> Existing company <select name="geoTiffExistingCompanies" id="geoTiffExistingCompanies" size="1"></select></label></div>
+                        </cfif>
                         
 
                     </div>
                     <div class="form-group">
                         <label>Personal layer display</label>
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="addGeoTiffToSelectedPersonal"> Add to selected group's personal layers</label>
-                        </div>
+                        <cfif session.admin>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="addGeoTiffToSelectedPersonal"> Add to selected group's personal layers</label>
+                            </div>
+                        </cfif>
                         <div class="checkbox">
                             <label><input type="checkbox" name="addGeoTiffToMyPersonal"> Add to my personal layers</label>
                         </div>
                         <br>
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="addGeoTiffToAllNewAccounts"> Add to all new user accounts</label>
-                        </div>                        
+                        <cfif session.admin>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="addGeoTiffToAllNewAccounts"> Add to all new user accounts</label>
+                            </div>              
+                        </cfif>          
                     </div>
 
 

@@ -62,7 +62,7 @@
                                 <cfif layer.ready GT 0>
                                     <td><a href="##" class="layer-center">#layer.name#</a></td>
                                 <cfelse>
-                                    <td colspan="3">#layer.name# (#getLayerStatus(id)#)</td>
+                                    <td colspan="3">#layer.name# (#trim(getLayerStatus(id))#)</td>
                                 </cfif>
                             <cfelse>
                                     <td>#layer.name#</td>

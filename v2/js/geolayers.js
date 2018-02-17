@@ -136,10 +136,10 @@ geodigraph = {
             
             $.get(geodigraph.baseUrl + "/modules/notifications.cfm", function(notifications) {
 
-                for(time in notifications) {
+                for(index in notifications) {
 
-                    var n = notifications[time];                    
-                    var notification = new GlNotification(n.id, time, n.icon, n.caption, n.message, n.link, n.delivered, n.read);
+                    var n = notifications[index];                    
+                    var notification = new GlNotification(n.id, n.time, n.icon, n.caption, n.message, n.link, n.delivered, n.read);
                     installNotification(notification);
 
                 }                
@@ -231,21 +231,24 @@ GlNotification.prototype.deliver = function() {
 
     if(!this.delivered) {
 
-
+        var notifyOptions = {
+            body: this.message,
+            icon: "/v2/img/geodigraph_icon.png",
+        };
 
         if(Notification.permission === "granted") {
-            var notify = new Notification(this.caption);
+            var notify = new Notification(this.caption, notifyOptions);
         }
         else {
             Notification.requestPermission(function (permission) {
                 if(permission === "granted") {
-                    var notify = new Notification(this.caption);
+                    var notify = new Notification(this.caption, notifyOptions);
                 }
             });
         }
 
-        var html = '<li id="not_' + time + '"><a href="#" onclick="showAlert(\'' + this.id + '\');"><div><i class="fa ' + this.icon + ' fa-fw"></i> ' + this.caption;
-        html += '<br><span class="pull-right text-muted small">' + this.time + '</span></div></a></li><li class="divider"></li>'
+        var html = '<li id="not_' + this.id + '"><a href="#' + this.link +'"><div><i class="fa ' + this.icon + ' fa-fw"></i> ' + this.caption;
+        html += '<span class="pull-right text-muted small">' + this.time + '</span></div></a></li><li class="divider"></li>'
 
         $("#notifications").append(html);
 

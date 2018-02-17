@@ -302,6 +302,31 @@
 			
 		}
 
+		public array function getNotifyTargets(required string layerId) output=false
+		{
+			mumps = new lib.cfmumps.Mumps();
+			mumps.open();
+
+			lastResult = false;
+			target = "";
+
+			notifyTargets = [];
+
+			while(lastResult == false) {
+				order = mumps.order("geodigraph", ["notifyTargets", arguments.layerId, target]);
+				lastResult = order.lastResult;
+				target = order.value;
+
+				if(target != "") {
+					notifyTargets.append({email: target});					
+				}
+			}
+
+			mumps.close();
+
+			return notifyTargets;
+		}
+
 		public void function setLayerRefresh(required string email) output=false
 		{
 			mumps = new lib.cfmumps.Mumps();
@@ -657,7 +682,8 @@
 					global = new lib.cfmumps.Global("geodigraph", ["accounts", session.email, "notifications", index]);
 					notification = global.getObject();
 					
-					notifications[index] = notification;	
+					notifications[index] = notification;
+					notifications[index].time = friendlyDate(notification.time);	
 
 					mumps.set("geodigraph", ["accounts", session.email, "notifications", index, "delivered"], "1");				
 				}
@@ -683,6 +709,35 @@
 			mumps.close();
 
 			return dateStr;
+		}
+
+		public string function friendlyDate(required datetime t)
+		{
+			n = now();
+
+			if(datediff("s", t, n) < 60) {
+				return "A few seconds ago";
+			}
+
+			if(datediff("n", t, n) >= 1 && datediff("n", t, n) <= 50) {
+				return datediff("n", t, n) & " minutes ago";
+			}
+
+			if(datediff("n", t, n) > 50 && datediff("n", t, n) < 80) {
+				return "About an hour ago";
+			}
+
+			if(datediff("h", t, n) > 1 && datediff("h", t, n) < 24) {
+				return datediff("h", t, n) & " hours ago";
+			}
+
+			if(datediff("h", t, n) >= 24 && datediff("h", t, n) < 48) {
+				return "Yesterday";
+			}
+
+			if(datediff("d", t, n) > 1) {
+				return datediff("d", t, n) & " days ago";
+			}
 		}
 
 

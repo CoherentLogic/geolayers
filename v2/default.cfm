@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>GeoLayers 2018</title>
+    <title>Geodigraph GIS 2018</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -59,7 +59,7 @@
                             </cfoutput>
                         </span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><cfoutput>#session.firstName# #session.lastName#</cfoutput></strong>
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><cfoutput>#session.firstName# #session.lastName# <cfif session.admin>(Administrator)</cfif></cfoutput></strong>
                             </span> <span class="text-muted text-xs block"><cfoutput>#session.company#</cfoutput> <b class="caret"></b></span> </span> </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
                                 <li><a href="#">Edit Profile</a></li>
@@ -97,9 +97,11 @@
                             <li><a href="#" onclick="geodigraph.updateSelects();">Manage Users &amp; Companies</a></li>
                         </ul>
                     </li>
+                    <cfif session.admin>
                     <li>
                         <a href="#" onclick="geodigraph.updateSelects();" data-toggle="modal" data-target="#dlgDebug"><i class="fa fa-bug"></i> <span class="nav-label">Debug</span></a>
-                    </li>                    
+                    </li>               
+                    </cfif>     
 
 
 
@@ -118,7 +120,7 @@
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
-                            <span class="m-r-sm text-muted welcome-message">Welcome to GeoLayers 2018!</span>
+                            <span class="m-r-sm text-muted welcome-message">Welcome to Geodigraph GIS 2018!</span>
                         </li>
                         <!--- <li class="dropdown">
                             <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
