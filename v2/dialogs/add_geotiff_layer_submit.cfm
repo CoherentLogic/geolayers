@@ -51,7 +51,7 @@
     filename = "/var/gis/raw_files/#form.geoTiffLayerId#.tif";
     fileUpload(filename, "geoTiffFile");
 
-    args = "-f #filename# -i '#form.geoTiffLayerId#'";
+    args = "-f #filename# -i '#form.geoTiffLayerId#' -m '#form.geoTiffMinZoom#' -M '#form.geoTiffMaxZoom#'";
     cfexecute(name="/var/gis/users/geolayers/geolayers/v2/bin/maketiles", arguments=args);
 
 </cfscript>

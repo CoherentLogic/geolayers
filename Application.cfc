@@ -264,7 +264,7 @@
 			}
 		}
 
-		public void function completeLayer(required string layerId) output=false
+		public void function completeLayer(required string layerId, required boolean failed) output=false
 		{
 			layer = getLayer(arguments.layerId);
 
@@ -291,12 +291,25 @@
 
 			mumps.close();
 
-			notification = new Notification({
-				caption: "#layer.name# is ready.",
-				message: "Layer #layer.name# has completed processing and is ready to view.",
-				link: "https://geolayers.geodigraph.com/v2/default.cfm?showLayer=#arguments.layerId#",
-				icon: "map"
-			});
+			if(failed) {
+
+				removeLayer(arguments.layerId);
+
+				notification = new Notification({
+					caption: "Error processing #layer.name#",
+					message: "Layer #layer.name# has failed processing, possibly due to a corrupt GeoTIFF file or a TIFF file that contains no georeference information.",
+					link: "",
+					icon: "exclamation-triangle"
+				});		
+			}
+			else {
+				notification = new Notification({
+					caption: "#layer.name# is ready.",
+					message: "Layer #layer.name# has completed processing and is ready to view.",
+					link: "https://geolayers.geodigraph.com/v2/default.cfm?showLayer=#arguments.layerId#",
+					icon: "map"
+				});
+			}
 
 			notification.send(notifyTargets);
 			
@@ -457,9 +470,32 @@
 			});
 		}
 
+		public void function removeLayer(required string layerId) output=false
+		{
+			mumps = new lib.cfmumps.Mumps();
+			mumps.open();
+
+			mumps.kill("geodigraph", ["layers", arguments.layerId]);
+
+			mumps.close();
+
+			notifyTargets = getNotifyTargets(arguments.layerId);
+
+			for(notifyTarget in notifyTargets) {
+				removeLayerFromUser(arguments.layerId, notifyTarget.email);
+			}
+		}
+
+
 		public void function removeLayerFromUser(required string layerId, required string email) output=false
 		{
+			mumps = new lib.cfmumps.Mumps();
+			mumps.open();
 
+			mumps.kill("geodigraph", ["accounts", arguments.email, "layers", arguments.layerId]);
+			mumps.kill("geodigraph", ["notifyTargets", arguments.layerId, arguments.email]);
+
+			mumps.close();
 		}
 
 		public void function setUserLayerZIndex(required string layerId,

@@ -4,7 +4,7 @@
 # f = tiff file
 # e = email
 
-TEMP=$(getopt -o i:f:e:  --long id:,file:,email: -n 'maketiles' -- "$@")
+TEMP=$(getopt -o i:f:e:m:M:  --long id:,file:,email:,minzoom:,maxzoom: -n 'maketiles' -- "$@")
 eval set -- "$TEMP"
 
 while true
@@ -14,6 +14,14 @@ do
 	    ID=$2
 	    shift 2
 	    ;;
+	-m|--minzoom)
+		MINZOOM=$2
+		shift 2
+		;;
+	-M|--maxzoom)
+		MAXZOOM=$2
+		shift 2
+		;;
 	-f|--file)
 	    FILE=$2
 	    shift 2
@@ -28,6 +36,8 @@ do
 	    ;;
     esac
 done
+
+
 
 BASEPATH=/var/gis/users/geolayers/geolayers/v2/tiles/${ID}
 
@@ -44,10 +54,11 @@ echo "Post-Processing" > ${STATFILE}
 
 date > ${STARTFILE}
 
-/usr/bin/gdal2tiles.py -w none ${FILE} ${BASEPATH}
+/usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH}
+RET=$?
 
 date > ${ENDFILE}
 
 echo "Completed" > ${STATFILE}
 
-wget "https://geolayers.geodigraph.com/v2/modules/complete_layer.cfm?layerid=${ID}" > /dev/null
+wget "https://geolayers.geodigraph.com/v2/modules/complete_layer.cfm?layerid=${ID}&failed=${RET}" > /dev/null

@@ -122,14 +122,8 @@
                         <li>
                             <span class="m-r-sm text-muted welcome-message">Welcome to Geodigraph GIS 2018!</span>
                         </li>
-                        <!--- <li class="dropdown">
-                            <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-                                <i class="fa fa-list-alt"></i> <span class="label label-primary" id="layerCount"></span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-alerts" id="layers">
-                                
-                            </ul>
-                        </li> --->
+                        
+                        <!---
                         <li class="dropdown">
 
                             <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
@@ -137,17 +131,9 @@
                             </a>
                             <ul class="dropdown-menu dropdown-alerts" id="notifications">
                                 
-                                <!--- <li class="divider"></li>
-                                <li>
-                                    <div class="text-center link-block">
-                                        <a href="notifications.html">
-                                            <strong>See All Alerts</strong>
-                                            <i class="fa fa-angle-right"></i>
-                                        </a>
-                                    </div>
-                                </li> --->
                             </ul>
                         </li>
+                        --->
 
 
                         <li>

@@ -54,10 +54,10 @@ component displayname=account output=false {
         }
 
         if(existingAccounts == false) {
-            adminValue = 1;
+            this.admin = 1;
         }
         else {
-            adminValue = 0;
+            this.admin = 0;
         }
 
         accountStruct = {
@@ -66,7 +66,7 @@ component displayname=account output=false {
             passwordHash: this.passwordHash,
             picture: this.picture,
             zip: this.zip,
-            admin: adminValue
+            admin: this.admin
         };
 
 
