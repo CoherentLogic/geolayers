@@ -1,40 +1,29 @@
 #!/bin/bash
 
-# t = title
-# k = gmaps key
+# i = id
 # f = tiff file
-# c = customer name
-# s = customer fixed name
-# i = layer id
+# e = email
 
-TEMP=$(getopt -o t:k:f:c:s:i:e:  --long title:,key:,file:,cust:,fix:,id:,email: -n 'maketiles' -- "$@")
+TEMP=$(getopt -o i:f:e:m:M:  --long id:,file:,email:,minzoom:,maxzoom: -n 'maketiles' -- "$@")
 eval set -- "$TEMP"
 
 while true
 do
     case "$1" in
-	-t|--title)
-	    TITLE=$2
-	    shift 2
-	    ;;
-	-k|--key)
-	    KEY=$2
-	    shift 2
-	    ;;
-	-f|--file)
-	    FILE=$2
-	    shift 2
-	    ;;
-	-c|--cust)
-	    CUST=$2
-	    shift 2
-	    ;;
-	-s|--fix)
-	    FIX=$2
-	    shift 2
-	    ;;
 	-i|--id)
 	    ID=$2
+	    shift 2
+	    ;;
+	-m|--minzoom)
+		MINZOOM=$2
+		shift 2
+		;;
+	-M|--maxzoom)
+		MAXZOOM=$2
+		shift 2
+		;;
+	-f|--file)
+	    FILE=$2
 	    shift 2
 	    ;;
 	-e|--email)
@@ -48,49 +37,28 @@ do
     esac
 done
 
-echo "FIX = ${FIX} ID = ${ID}"
 
 
-BASEPATH=/var/gis/users/geolayers/geolayers/repo/${FIX}/${ID}
+BASEPATH=/var/gis/users/geolayers/geolayers/v2/tiles/${ID}
 
 mkdir -p ${BASEPATH}
 
 STARTFILE="${BASEPATH}/START.GL8"
 ENDFILE="${BASEPATH}/END.GL8"
 STATFILE="${BASEPATH}/STAT.GL8"
-CUSTFILE="${BASEPATH}/CUSTOMER.GL8"
-TITLEFILE="${BASEPATH}/TITLE.GL8"
 IDFILE="${BASEPATH}/ID.GL8"
 
-URL="http://geolayers.geodigraph.com/repo/${FIX}/${ID}/googlemaps.html"
-
-echo ${CUST} > ${CUSTFILE}
-echo ${TITLE} > ${TITLEFILE}
 echo ${ID} > ${IDFILE}
 
-echo "GeoTIFF postprocessing in progress" > ${STATFILE}
+echo "Post-Processing" > ${STATFILE}
 
 date > ${STARTFILE}
 
-/usr/bin/gdal2tiles.py -t "${TITLE}" -g "${KEY}" ${FILE} ${BASEPATH}
+/usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH}
+RET=$?
 
 date > ${ENDFILE}
 
 echo "Completed" > ${STATFILE}
 
-mailx -a 'Content-Type: text/html' -r 'geolayers@geodigraph.com (GeoLayers 2018)' -s "GeoLayers 2018: ${TITLE}" "${EMAIL}" <<EOF
-
-<html>
-<head>
-<style>
-</style>
-</head>
-<body>
-<center><img src="http://geolayers.geodigraph.com/images/geodigraph.png"></center>
-
-<h1>Your imagery is ready!</h1>
-<a href="${URL}">${TITLE}</a>
-</body>
-</html>
-
-EOF
+wget "https://geolayers.geodigraph.com/v2/modules/complete_layer.cfm?layerid=${ID}&failed=${RET}" > /dev/null

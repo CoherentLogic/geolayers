@@ -21,8 +21,8 @@
     <cfif IsDefined("form.submit")>
 
        <cfscript>
-            pwh = hash(form.password);
-            account = createObject("account");
+            pwh = hash(form.password, "SHA-256");
+            account = new Account();
 
             try {
                 account.open(form.email);

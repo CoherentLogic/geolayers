@@ -1,6 +1,6 @@
 geodigraph = {
     // base config
-    baseUrl: "/v2",
+    baseUrl: "",
 
     // poller config
     pollers: [],
@@ -233,7 +233,7 @@ GlNotification.prototype.deliver = function() {
 
         var notifyOptions = {
             body: this.message,
-            icon: "/v2/img/geodigraph_icon.png",
+            icon: "/img/geodigraph_icon.png",
         };
 
         if(Notification.permission === "granted") {

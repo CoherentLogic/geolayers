@@ -43,12 +43,12 @@ function initializeLayers(m) {
         m.layers = {};
     }
 
-    $.get("/v2/modules/layers.cfm?json=1", function(layers) {
+    $.get("/modules/layers.cfm?json=1", function(layers) {
+        
         for(id in layers) {
-            var l = {};           
-            var opacity = null;
 
-            
+            var l = {};           
+            var opacity = null;            
 
             if(layers[id].layer.renderer === 'parcel') {
                 //TODO: parcel layers
@@ -73,7 +73,7 @@ function initializeLayers(m) {
                 l.copyright = layers[id].layer.copyright || "";
                 l.minZoom = layers[id].layer.minZoom || 9;
                 l.maxZoom = layers[id].layer.maxZoom || 23; 
-                l.errorTileUrl = "https://geolayers.geodigraph.com/v2/img/no_tile.png";
+                l.errorTileUrl = "https://geolayers.geodigraph.com/img/no_tile.png";
 
                 m.layers[id] = {
                     opacity: opacity,
@@ -81,9 +81,10 @@ function initializeLayers(m) {
                     leafletLayer: L.tileLayer(l.url, l)
                 };
 
+                
                 m.layers[id].leafletLayer.addTo(map.leafletMap);
+               
                 m.layers[id].leafletLayer.setZIndex(layers[id].properties.zIndex);
-
                 
             }
 
@@ -95,7 +96,7 @@ function initializeLayers(m) {
                 }, 2000);
             }
             else {
-                $.get("/v2/modules/get_map_position.cfm", function(position) {
+                $.get("/modules/get_map_position.cfm", function(position) {
                     var pos = L.latLng(position.lat, position.lng);                    
                     m.leafletMap.setView(pos, position.zoom);
                 });
@@ -119,7 +120,7 @@ function GlMap(opts, done)
 
 
         queueUpdate({
-            url: "/v2/modules/set_map_position.cfm?lat=" + center.lat + "&lng=" + center.lng + "&zoom=" + zoom,
+            url: "/modules/set_map_position.cfm?lat=" + center.lat + "&lng=" + center.lng + "&zoom=" + zoom,
             id: "updateMapPosition"
         });
     };
@@ -143,7 +144,7 @@ GlMap.prototype.showLayer = function(layerId) {
 GlMap.prototype.centerToLayer = function(layerId) {
     var self = this;
 
-    $.get("/v2/tiles/" + layerId + "/tilemapresource.xml", function(data) {
+    $.get("/tiles/" + layerId + "/tilemapresource.xml", function(data) {
         xml = $(data);
         bbox = xml.find("BoundingBox");
 
@@ -172,7 +173,7 @@ GlMap.prototype.increaseLayerOpacity = function (layerId) {
 
         queueUpdate({
             id: "increaseOpacity/" + layerId,
-            url: "/v2/modules/set_layer_opacity.cfm?layerId=" + layerId + "&opacity=" + newOpacity
+            url: "/modules/set_layer_opacity.cfm?layerId=" + layerId + "&opacity=" + newOpacity
         });
     }
 };
@@ -186,7 +187,7 @@ GlMap.prototype.decreaseLayerOpacity = function (layerId) {
 
         queueUpdate({
             id: "decreaseOpacity/" + layerId,
-            url: "/v2/modules/set_layer_opacity.cfm?layerId=" + layerId + "&opacity=" + newOpacity
+            url: "/modules/set_layer_opacity.cfm?layerId=" + layerId + "&opacity=" + newOpacity
         });
     }
 

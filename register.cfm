@@ -20,18 +20,18 @@
 
     <cfif IsDefined("form.submit")>
         <cfscript>
-            user = createObject("account");
+            user = new Account();
 
             user.email = form.email;
             user.firstName = form.firstName;
             user.lastName = form.lastName;
-            user.company = form.company;
+            user.company = user.email;
             user.zip = form.zip;
 
             user.setPassword(form.password);
             user.save();   
 
-            addDefaultLayers(form.email);
+            user.addDefaultLayers();
             
             addUserToCompany(user.email, user.company);
             setUserCompany(user.email, user.company); 
@@ -42,7 +42,8 @@
             session.company = user.company;
             session.zip = user.zip;
             session.picture = "img/placeholder.png"
-            session.loggedIn = true
+            session.loggedIn = true;
+            session.account = user;
 
             if(user.admin == 1) {
                 session.admin = true;
@@ -78,10 +79,11 @@
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Last Name" required="" name="lastName">
                     </div>
-                    
+                    <!---
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Company Name" required="" name="company">
                     </div>
+                    --->
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="ZIP Code" required="" name="zip">
                     </div>

@@ -6,7 +6,7 @@
 
 <cfdump var="#attr#">
 
-<cfmail from="geolayers@geodigraph.com" to="#attr.recipient#" subject="[Geodigraph] #attr.caption#" type="text/html">
+<cfmail from="alerts@geodigraph.com" to="#attr.recipient#" subject="[Geodigraph] #attr.caption#" type="text/html">
     <cfoutput>
         <!DOCTYPE html>
         <html lang="en">
@@ -28,7 +28,7 @@
             <body>
 
                 <div class="wrapper">
-                    <img src="https://geolayers.geodigraph.com/v2/img/login-header.png" alt="Geodigraph logo">
+                    <img src="https://maps.geodigraph.com/img/login-header.png" alt="Geodigraph logo">
 
                     <p>#attr.message#</p>
 

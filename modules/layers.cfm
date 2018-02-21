@@ -1,6 +1,8 @@
-<cfsilent>
-<cfset layers = getUserLayers(session.email)>
-</cfsilent>
+<cfscript>
+    layers = session.account.layers();
+</cfscript>
+
+
 <cfif isDefined("url.json")>
     <cfheader name="Content-Type" value="application/json">
 
