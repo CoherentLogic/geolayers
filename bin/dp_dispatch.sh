@@ -23,6 +23,7 @@ then
     if [[ ! -f ${LOCKFILE} ]]
     then
         touch ${LOCKFILE}
+        sleep 5
 
         SCRIPTNAME=$(cat ${FILE} | head -1)
         SCRIPTARGS=$(cat ${FILE} | head -2 | tail -1)
