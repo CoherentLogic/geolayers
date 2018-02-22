@@ -29,6 +29,8 @@ then
         SCRIPTARGS=$(cat ${FILE} | head -2 | tail -1)
         DESCRIPTION=$(cat ${FILE} | tail -1)
 
+        rm ${FILE}
+
         logger "dp_dispatch [$$]:  dispatching DistributedProcess ID ${JOBID} [${DESCRIPTION}]"
         updateServer ${JOBID} $DP_PROCESSING
 

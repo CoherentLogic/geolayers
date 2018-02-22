@@ -1,6 +1,22 @@
 <cfscript>
 
-//for(i = 1; i < 5; i++) {
+for(i = 1; i < 5; i++) {
+    id = createUUID();
+    p = new DistributedProcess(id, {
+        scriptName: "logger",
+        scriptArgs: "ImSoHungry",
+        description: "Testing the DistributedProcess API, job #i#"
+    });
+
+    writeOutput("This process will run on node #p.node# [#p.workingDirectory#]<br>");
+
+    id = "";
+}
+
+</cfscript>
+
+<!---
+    for(i = 1; i < 5; i++) {
     id = createUUID();
     p = new DistributedProcess(id, {
         scriptName: "/home/geodigraph/webapps/maps/bin/maketiles",
@@ -9,6 +25,5 @@
     });
 
     writeOutput("This process will run on node #p.node#<br>");
-//}
-
-</cfscript>
+    }
+--->    
