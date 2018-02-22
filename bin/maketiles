@@ -41,6 +41,6 @@ BASEPATH=/home/geodigraph/webapps/maps/pool/tiles/${ID}
 mkdir -p ${BASEPATH}
 
 
-/usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH} 
+/usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH} > /tmp/maketiles.${ID}
 
 exit $?
