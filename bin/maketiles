@@ -39,7 +39,7 @@ done
 
 
 
-BASEPATH=/var/gis/users/geolayers/geolayers/v2/tiles/${ID}
+BASEPATH=/home/geodigraph/webapps/maps/pool/tiles/${ID}
 
 mkdir -p ${BASEPATH}
 
@@ -55,10 +55,5 @@ echo "Post-Processing" > ${STATFILE}
 date > ${STARTFILE}
 
 /usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH}
-RET=$?
 
-date > ${ENDFILE}
-
-echo "Completed" > ${STATFILE}
-
-wget "https://geolayers.geodigraph.com/v2/modules/complete_layer.cfm?layerid=${ID}&failed=${RET}" > /dev/null
+exit $?

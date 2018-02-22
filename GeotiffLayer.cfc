@@ -24,4 +24,9 @@ component displayname="GeotiffLayer" extends="Layer" {
         return this;
     }
 
+    public void function upload(required string file) output=false
+    {
+
+    }
+
 }
