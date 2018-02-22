@@ -8,8 +8,7 @@
         copyright: form.baseLayerCopyright,
         minZoom: form.baseLayerMinZoom,
         maxZoom: form.baseLayerMaxZoom,
-        contributor: session.email,
-        ready: 1
+        contributor: session.account.email
     });
 
     switch(form.baseLayerAddTo) {

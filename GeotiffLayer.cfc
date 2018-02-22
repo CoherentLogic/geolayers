@@ -10,23 +10,25 @@ component displayname="GeotiffLayer" extends="Layer" {
         // its methods.
         if(isDefined("arguments.opts")) {
 
-            // Make sure arguments.opts.renderer is 'geotiff'
-            // to match this subclass of Layer
+            // GeotiffLayers are always renderer == 'geotiff'
             arguments.opts.renderer = 'geotiff';
+
+            // GeotiffLayers always begin their lifecycle as ready == 0
             arguments.opts.ready = 0;
 
             super.init(arguments.id, arguments.opts);
         }
         else {
             super.init(arguments.id);
+
+            var mumps = new lib.cfmumps.Mumps();
+            mumps.open(); 
+
+            super.addStringAttribute("processorId", mumps.get("geodigraph", ["layers", arguments.id, "processorId"]));
+            
+            mumps.close();
         }
 
         return this;
     }
-
-    public void function upload(required string file) output=false
-    {
-
-    }
-
 }

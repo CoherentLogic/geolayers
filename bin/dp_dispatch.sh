@@ -18,12 +18,11 @@ cd ${WATCHED}
 if [[ ${EXT} == ".job" ]]
 then
     JOBID=$(basename $FILE .job)
-    STATFILE="${JOBID}.stat"
+    LOCKFILE="${JOBID}.lock"
 
-    if [[ ! -f ${STATFILE} ]]
+    if [[ ! -f ${LOCKFILE} ]]
     then
-        sleep 5
-        touch ${STATFILE}
+        touch ${LOCKFILE}
 
         SCRIPTNAME=$(cat ${FILE} | head -1)
         SCRIPTARGS=$(cat ${FILE} | head -2 | tail -1)
@@ -34,7 +33,11 @@ then
         logger "dp_dispatch [$$]:  dispatching DistributedProcess ID ${JOBID} [${DESCRIPTION}]"
         updateServer ${JOBID} $DP_PROCESSING
 
-        ${SCRIPTNAME} ${SCRIPTARGS}
+        CMD="${DP_BASEDIR}/${SCRIPTNAME} ${SCRIPTARGS}"
+
+
+        logger "dp_dispatch [$$]:  executing ${CMD}"
+        ${CMD}
 
         RET=$?
 
@@ -44,8 +47,9 @@ then
         else
             updateServer ${JOBID} $DP_FAILED
         fi
-
-        rm ${STATFILE}
-
+    else
+        logger "dp_dispatch [$$]:  ignoring ${JOBID}; already processed (found lockfile)"
     fi
+
+
 fi

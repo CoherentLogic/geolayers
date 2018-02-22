@@ -19,6 +19,6 @@ function updateServer {
         logger "dp_dispatch [$$]:  DistributedProcess ID ${JOBID} COMPLETE"
     fi
 
-    wget ${URL} &> /dev/null
+    curl ${URL} &> /dev/null 
 
 }

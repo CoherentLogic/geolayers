@@ -37,23 +37,10 @@ do
     esac
 done
 
-
-
 BASEPATH=/home/geodigraph/webapps/maps/pool/tiles/${ID}
-
 mkdir -p ${BASEPATH}
 
-STARTFILE="${BASEPATH}/START.GL8"
-ENDFILE="${BASEPATH}/END.GL8"
-STATFILE="${BASEPATH}/STAT.GL8"
-IDFILE="${BASEPATH}/ID.GL8"
 
-echo ${ID} > ${IDFILE}
-
-echo "Post-Processing" > ${STATFILE}
-
-date > ${STARTFILE}
-
-/usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH}
+/usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH} 
 
 exit $?

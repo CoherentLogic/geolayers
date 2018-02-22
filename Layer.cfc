@@ -1,4 +1,4 @@
-component displayname="Layer" {
+component displayname="Layer" extends="Util" {
 
     public Layer function init(required string id, struct opts) output=false
     {
@@ -59,6 +59,23 @@ component displayname="Layer" {
         }
 
         return this;
+    }
+
+    public void function postProcess(required string scriptName,
+                                     required string scriptArgs,
+                                     required string description)
+    {
+        this.processorId = createUUID();
+        
+        this.process = new DistributedProcess(this.processorId, {
+            layerId: this.id,
+            description: arguments.description,
+            scriptName: arguments.scriptName,
+            scriptArgs: arguments.scriptArgs
+        });
+
+        this.addStringAttribute("processorId", this.processorId);
+        this.save();
     }
 
     public void function addStringAttribute(required string key, required string value)

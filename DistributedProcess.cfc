@@ -1,7 +1,7 @@
 component displayname="DistributedProcess" {
 
-    public DistributedProcess function init(required string processId,
-                                 struct opts) output=false
+    public DistributedProcess function init(required string processId,                                                 
+                                            struct opts) output=false
     {
         var DP_WAITNODE = 0;
         var DP_PROCESSING = 1;
@@ -52,16 +52,19 @@ component displayname="DistributedProcess" {
             this.scriptName = arguments.opts.scriptName;
             this.scriptArgs = arguments.opts.scriptArgs;
             this.description = arguments.opts.description;
+            this.layerId = arguments.opts.layerId;
 
-            global.setObject({
-                status: "DP_WAITNODE",
-                pid: "",                
+            var dbObj = {
+                status: "DP_WAITNODE",                                
                 scriptName: this.scriptName,
                 scriptArgs: this.scriptArgs,
                 node: this.node,
                 workingDirectory: this.workingDirectory,
-                description: this.description
-            });            
+                description: this.description,
+                layerId: this.layerId
+            };
+
+            global.setObject(dbObj);            
 
 
             if(!directoryExists(this.workingDirectory)) {
@@ -79,7 +82,10 @@ component displayname="DistributedProcess" {
             var output = this.scriptName & newline & this.scriptArgs & newline & this.description & newline;
 
             try {
-                fileWrite(jobFile, output);
+                var fileObj = fileOpen(jobFile, "write");
+
+                fileWrite(fileObj, output);
+                fileClose(fileObj);
             }
             catch(any ex) {
                 throw(type="DistributedProcess", message="Could not write #jobFile#");
@@ -99,11 +105,11 @@ component displayname="DistributedProcess" {
             global.close();
 
             this.status = p.status;
-            this.pid = p.pid;
             this.filePath = p.filePath;
             this.scriptName = p.scriptName;
             this.scriptArgs = p.scriptArgs;
             this.uploadDirectory = p.uploadDirectory;
+            this.layerId = p.layerId;
         }
 
         return this;

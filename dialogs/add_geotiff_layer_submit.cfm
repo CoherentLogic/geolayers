@@ -1,21 +1,24 @@
 <cfscript>
 
-    addGeoTiffLayer(form.geoTiffLayerId, 
-                    form.geoTiffLayerName, 
-                    form.geoTiffMinZoom, 
-                    form.geoTiffMaxZoom, 
-                    form.geoTiffAttribution, 
-                    form.geoTiffCopyright);
+    layer = new GeotiffLayer(form.geoTiffLayerId, {
+        name: form.geoTiffLayerName,
+        minZoom: form.geoTiffMinZoom,
+        maxZoom: form.geoTiffMaxZoom,
+        attribution: form.geoTiffAttribution,
+        copyright: form.geoTiffCopyright,
+        contributor: session.account.email
+    });
 
+   
     switch(form.addGeoTiffTo) {
         case "allUsers":
-            grantLayerGlobalAccess(form.geoTiffLayerId);
+            layer.grantGlobalAccess();
             break;
         case "existingUser":
-            grantLayerUserAccess(form.geoTiffLayerId, form.geoTiffExistingUsers);
+            layer.grantUserAccess(new Account(form.geoTiffExistingUsers));
             break;
         case "existingCompany":
-            grantLayerCompanyAccess(form.geoTiffLayerId, form.geoTiffExistingCompanies);
+            layer.grantCompanyAccess(new Company(form.geoTiffExistingCompanies));
             break;
     }
 
@@ -32,26 +35,27 @@
                 break;
         }
 
-        for(user in userList) {
-            addLayerToUser(form.geoTiffLayerId, user.email, 2, 50, 1);
-            setLayerRefresh(user.email);
-        }
 
+        for(user in userList) {
+            u = new Account(user.email);
+
+            layer.share(u, true, 2, 50);
+        }
     }
 
     if(isDefined("form.addGeoTiffToMyPersonal")) {
-        addLayerToUser(form.geoTiffLayerId, session.email, 2, 50, 1);  
-        setLayerRefresh(session.email);                       
+        layer.share(session.account, true, 2, 50);                      
     }
 
     if(isDefined("form.addGeoTiffToAllNewAccounts")) {
-        addLayerToAllNewAccounts(form.geoTiffLayerId);
+        layer.setAsDefault();
     }
 
-    filename = "/var/gis/raw_files/#form.geoTiffLayerId#.tif";
+    filename = "/home/geodigraph/webapps/maps/pool/inbound/staging/#layer.id#.tif";
     fileUpload(filename, "geoTiffFile");
 
-    args = "-f #filename# -i '#form.geoTiffLayerId#' -m '#form.geoTiffMinZoom#' -M '#form.geoTiffMaxZoom#'";
-    cfexecute(name="/var/gis/users/geolayers/geolayers/v2/bin/maketiles", arguments=args);
+    args = "-f '#filename#' -i '#layer.id#' -m #layer.minZoom# -M #layer.maxZoom#";
+    
+    layer.postProcess("maketiles", args, "Convert GeoTIFF to Tiles");
 
 </cfscript>
