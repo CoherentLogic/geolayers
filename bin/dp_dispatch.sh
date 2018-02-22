@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source /etc/default/dp_dispatch
+source ${DP_BASEDIR}/dp_util.sh
 
 DP_WAITNODE=0
 DP_PROCESSING=1
@@ -12,28 +13,6 @@ FILE=$2
 EXT=${FILE: -4}
 STATE=$DP_WAITNODE
 
-function updateServer {
-
-    local DPID=$1
-    local NEWSTATE=$2
-    local URL="${DP_URL}?distributedProcessId=${DPID}&newState=${NEWSTATE}"
-
-    OLDSTATE=$STATE
-    STATE=$NEWSTATE
-
-    logger "dp_dispatch [$$]:  DistributedProcess ID ${JOBID} state transition (${OLDSTATE}->${NEWSTATE})"
-
-    if [[ ${NEWSTATE} == $DP_FAILED ]]
-    then
-        logger "dp_dispatch [$$]:  DistributedProcess ID ${JOBID} FAILED"
-    fi
-
-    wget ${URL} &> /dev/null
-
-}
-
-
-
 cd ${WATCHED}
 
 if [[ ${EXT} == ".job" ]]
@@ -43,6 +22,7 @@ then
 
     if [[ ! -f ${STATFILE} ]]
     then
+        sleep 5
         touch ${STATFILE}
 
         SCRIPTNAME=$(cat ${FILE} | head -1)
