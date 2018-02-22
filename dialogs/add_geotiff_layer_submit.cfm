@@ -54,7 +54,7 @@
     filename = "/home/geodigraph/webapps/maps/pool/inbound/staging/#layer.id#.tif";
     fileUpload(filename, "geoTiffFile");
 
-    args = "-f '#filename#' -i '#layer.id#' -m #layer.minZoom# -M #layer.maxZoom#";
+    args = "-f #filename# -i #layer.id# -m #layer.minZoom# -M #layer.maxZoom#";
     
     layer.postProcess("maketiles", args, "Convert GeoTIFF to Tiles");
 

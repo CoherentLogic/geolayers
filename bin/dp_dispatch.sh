@@ -15,7 +15,7 @@ STATE=$DP_WAITNODE
 
 cd ${WATCHED}
 
-if [[ ${EXT} == ".job" ]]
+if [[ ${EXT} == ".job" && -s ${FILE} ]]
 then
     JOBID=$(basename $FILE .job)
     LOCKFILE="${JOBID}.lock"
@@ -23,7 +23,6 @@ then
     if [[ ! -f ${LOCKFILE} ]]
     then
         touch ${LOCKFILE}
-        sleep 5
 
         SCRIPTNAME=$(cat ${FILE} | head -1)
         SCRIPTARGS=$(cat ${FILE} | head -2 | tail -1)
@@ -51,6 +50,6 @@ then
     else
         logger "dp_dispatch [$$]:  ignoring ${JOBID}; already processed (found lockfile)"
     fi
-
-
+else
+    logger "dp_dispatch [$$]:  ignoring empty job file ${FILE}"
 fi
