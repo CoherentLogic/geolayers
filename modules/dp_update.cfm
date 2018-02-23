@@ -17,7 +17,7 @@ switch(url.newState) {
         break;
     case 1:
         newStatus = "DP_PROCESSING";
-        statStr = "processing on node " + process.node;
+        statStr = "processing on node " & process.node;
         statSum = "Layer began processing";
         icon = "fa-spinner";
         break;
@@ -29,8 +29,9 @@ switch(url.newState) {
         break;
     case 2:
         newStatus = "DP_FAILED";
-        statStr = "failed to process";
-        statSum = "Layer failed to process"
+        statStr = "had an unrecoverable error in processing, likely due to a corrupt or invalid file";
+        statSum = "Layer failed to process";
+        icon = "fa-exclamation-triangle";
         break;
 }
 
@@ -40,7 +41,7 @@ layer = util.getLayerObject(process.layerId);
 
 var notification = new Notification({
     caption: statSum,
-    message: "Layer #layer.name# #statstr#",
+    message: "Layer #layer.name# #statStr#",
     icon: icon,
     link: "https://maps.geodigraph.com/default.cfm?showLayer=#layer.id#"
 });
@@ -48,5 +49,7 @@ var notification = new Notification({
 for(user in layer.getNotifyTargets()) {
     notification.send(user);
 }
+
+mumps.close();
 
 </cfscript>
