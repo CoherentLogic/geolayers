@@ -56,6 +56,6 @@
 
     args = "-f #filename# -i #layer.id# -m #layer.minZoom# -M #layer.maxZoom#";
     
-    layer.postProcess("maketiles", args, "Convert GeoTIFF to Tiles");
+    layer.postProcess("maketiles", args, "Conversion of GeoTIFF to tiles for layer #layer.name#");
 
 </cfscript>

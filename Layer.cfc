@@ -238,6 +238,19 @@ component displayname="Layer" extends="Util" {
         mumps.close();
     }
 
+    public array function getNotifyTargets()
+    {
+        var global = new lib.cfmumps.Global("geodigraph", ["notifyTargets", this.id]);
+        var targetStruct = global.getObject();
+        var targets = [];
+
+        for(target in targetStruct) {
+            targets.append(new Account(target));
+        }
+
+        return targets;
+    }
+
     public void function addNotifyTarget(required Account user)
     {
         var global = new lib.cfmumps.Global("geodigraph", ["notifyTargets", this.id, arguments.user.email]);

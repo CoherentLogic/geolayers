@@ -19,6 +19,10 @@ function updateServer {
         logger "dp_dispatch [$$]:  DistributedProcess ID ${JOBID} COMPLETE"
     fi
 
-    curl ${URL} &> /dev/null 
+    curl ${URL} > /dev/null
+
+    CURL_RET=$?    
+    logger "dp_dispatch [$$]:  curl returned exit code ${CURL_RET} for state transition ${OLDSTATE}->${NEWSTATE}"
+    
 
 }
