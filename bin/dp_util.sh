@@ -19,6 +19,8 @@ function updateServer {
         logger "dp_dispatch [$$]:  DistributedProcess ID ${JOBID} COMPLETE"
     fi
 
+    logger "dp_dispatch [$$]:  callback URL:  ${URL}"
+
     curl ${URL} > /dev/null
 
     CURL_RET=$?    
