@@ -1,7 +1,9 @@
 <cfscript>
 
 for(i = 1; i < 20; i++) {
+
     id = createUUID();
+    
     p = new DistributedProcess(id, {
         scriptName: "logger",
         scriptArgs: "TestyGlops",

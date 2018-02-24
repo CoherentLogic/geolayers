@@ -100,12 +100,33 @@ component displayname=Account output=false extends="Util" {
         return this;
     }
 
-    public void function setUiRefresh()
+     public void function saveSessionId()
     {
         var mumps = new lib.cfmumps.Mumps();
         mumps.open();
 
-        mumps.set("geodigraph", ["accounts", this.email, "layerRefresh"], 1);
+        mumps.set("geodigraph", ["accounts", this.email, "sessions", session.sessionID, "flags", "uiRefresh"], 0);
+
+        mumps.close();
+    }
+
+    public void function setUiRefresh()
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open(); 
+
+        var lastResult = false;
+        var sessId = "";
+
+        while(lastResult == false) {
+            order = mumps.order("geodigraph", ["accounts", this.email, "sessions", sessId]);
+            lastResult = order.lastResult;
+            sessId = order.value;
+
+            if(sessId != "") {
+                 mumps.set("geodigraph", ["accounts", this.email, "sessions", sessId, "flags", "uiRefresh"], 1);
+            }
+        }
 
         mumps.close();
     }
@@ -115,7 +136,7 @@ component displayname=Account output=false extends="Util" {
         var mumps = new lib.cfmumps.Mumps();
         mumps.open();
 
-        mumps.set("geodigraph", ["accounts", this.email, "layerRefresh"], 0);
+        mumps.set("geodigraph", ["accounts", this.email, "sessions", session.sessionID, "flags", "uiRefresh"], 0);
 
         mumps.close();
     }
@@ -125,7 +146,7 @@ component displayname=Account output=false extends="Util" {
         var mumps = new lib.cfmumps.Mumps();
         mumps.open();
 
-        var refresh = mumps.get("geodigraph", ["accounts", session.email, "layerRefresh"]);
+        var refresh = mumps.get("geodigraph", ["accounts", session.email, "sessions", session.sessionID, "flags", "uiRefresh"]);
 
         mumps.close();
         
@@ -178,6 +199,8 @@ component displayname=Account output=false extends="Util" {
         mumps.close();
     }
 
+   
+
     public struct function layers()
     {        
         var mumps = new lib.cfmumps.Mumps();
@@ -202,6 +225,7 @@ component displayname=Account output=false extends="Util" {
                 global = new lib.cfmumps.Global("geodigraph", ["accounts", this.email, "layers", layerId]);
 
                 layer = {
+                    object: layerObj,
                     layer: layerObj.toStruct(),
                     properties: global.getObject()
                 };

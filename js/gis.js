@@ -60,7 +60,8 @@ function initializeLayers(m) {
                         l.tms = false;                    
                         break;
                     case 'geotiff':
-                        l.url = 'https://geolayers.geodigraph.com' + m.opts.baseUrl + '/tiles/' + id + '/{z}/{x}/{y}.png';
+                        console.log(m.opts.baseUrl );
+                        l.url = 'https://maps.geodigraph.com' + m.opts.baseUrl + '/pool/tiles/' + id + '/{z}/{x}/{y}.png';
                         l.tms = true;
                         break;                    
                 }
@@ -128,10 +129,75 @@ function GlMap(opts, done)
     this.leafletMap.on('moveend', mapPosChanged);
     this.leafletMap.on('zoomend', mapPosChanged);  
 
+    this.leafletMap.on('click', function(e) {
+        if(self.measuring) {
+
+            if(self.measurementPolygon) {
+                self.measurementPolygon.removeFrom(self.leafletMap);
+            }
+
+            if(self.measurementPolyline) {
+                self.measurementPolyline.removeFrom(self.leafletMap);
+            }
+
+            self.measurementCoordinates.push(e.latlng);
+            
+            self.measurementPolygon = L.polygon(self.measurementCoordinates, {color: 'green'});
+            self.measurementPolyline = L.polyline(self.measurementCoordinates, {color: 'green'});
+
+            switch(self.measureMode) {
+            case 'area':
+                self.measurementPolygon.addTo(self.leafletMap);
+                break;
+            case 'length':
+                self.measurementPolyline.addTo(self.leafletMap);
+                break;
+            }
+
+        }
+    });
+
+    this.measurementCoordinates = [];
+    this.measuring = false;
+    this.measurementPolygon = null;
+    this.measurementPolyline = null;
+    this.measureMode = null;
+
     if(done) done(this);
     
     return this;
 }
+
+GlMap.prototype.measureArea = function() {
+    if(this.measurementPolygon) {
+        this.measurementPolygon.removeFrom(this.leafletMap);
+    }
+
+    if(this.measurementPolyline) {
+        this.measurementPolyline.removeFrom(this.leafletMap);
+    }
+
+    this.measurementCoordinates = [];
+
+    this.measureMode = 'area';
+    this.measuring = true;
+};
+
+GlMap.prototype.measureLength = function() {
+    if(this.measurementPolygon) {
+        this.measurementPolygon.removeFrom(this.leafletMap);
+    }
+
+    if(this.measurementPolyline) {
+        this.measurementPolyline.removeFrom(this.leafletMap);
+    }
+
+    this.measurementCoordinates = [];
+
+    this.measureMode = 'length';
+    this.measuring = true;
+};
+
 
 GlMap.prototype.hideLayer = function(layerId) {
     this.setLayerOpacity(layerId, 0);
@@ -144,7 +210,7 @@ GlMap.prototype.showLayer = function(layerId) {
 GlMap.prototype.centerToLayer = function(layerId) {
     var self = this;
 
-    $.get("/tiles/" + layerId + "/tilemapresource.xml", function(data) {
+    $.get("/pool/tiles/" + layerId + "/tilemapresource.xml", function(data) {
         xml = $(data);
         bbox = xml.find("BoundingBox");
 

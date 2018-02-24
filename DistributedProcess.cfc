@@ -17,11 +17,11 @@ component displayname="DistributedProcess" {
             var mumps = new lib.cfmumps.Mumps();
             mumps.open();
 
-            var totalProcessors = mumps.get("geodigraph", ["dp", "count"]);
+            var totalProcessors = mumps.get("distproc", ["dp", "count"]);
 
             lock scope="Application" timeout="10" {
-                if(mumps.lock("geodigraph", ["dp", "current"], 10)) {
-                    var processorNumber = mumps.get("geodigraph", ["dp", "current"]);
+                if(mumps.lock("distproc", ["dp", "current"], 10)) {
+                    var processorNumber = mumps.get("distproc", ["dp", "current"]);
 
                     if(processorNumber < totalProcessors) {
                         processorNumber++;
@@ -30,17 +30,17 @@ component displayname="DistributedProcess" {
                         processorNumber = 1;
                     }
 
-                    mumps.set("geodigraph", ["dp", "current"], processorNumber);
+                    mumps.set("distproc", ["dp", "current"], processorNumber);
 
                 }
                 else {
                     throw("Unable to acquire database lock on distributed processing global");
                 }
 
-                mumps.unlock("geodigraph", ["dp", "current"]);
+                mumps.unlock("distproc", ["dp", "current"]);
             }
 
-            this.node = mumps.get("geodigraph", ["dp", "processors", processorNumber]);
+            this.node = mumps.get("distproc", ["dp", "processors", processorNumber]);
             this.workingDirectory = expandPath("/pool/inbound/#this.node#")
 
 

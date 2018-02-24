@@ -41,6 +41,8 @@
                     session.zip = account.zip;
                     session.loggedIn = true;
 
+                    account.saveSessionId();
+
                     session.admin = account.admin;
 
                     session.account = account;

@@ -2,7 +2,6 @@
     layers = session.account.layers();
 </cfscript>
 
-
 <cfif isDefined("url.json")>
     <cfheader name="Content-Type" value="application/json">
 
@@ -64,7 +63,7 @@
                                 <cfif layer.ready GT 0>
                                     <td><a href="##" class="layer-center">#layer.name#</a></td>
                                 <cfelse>
-                                    <td colspan="3">#layer.name# (#trim(getLayerStatus(id))#)</td>
+                                    <td colspan="3">#layer.name# (#trim(layers[id].object.getStatus())#)</td>
                                 </cfif>
                             <cfelse>
                                     <td>#layer.name#</td>

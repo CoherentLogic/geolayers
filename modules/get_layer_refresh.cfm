@@ -5,4 +5,8 @@ writeOutput(serializeJSON({
 }));
 
 session.account.clearUiRefresh();
+var mumps = new lib.cfmumps.Mumps();
+mumps.open();
+
+mumps.kill("geodigraph", ["accounts", session.account.email, "layerRefresh"]);
 </cfscript>

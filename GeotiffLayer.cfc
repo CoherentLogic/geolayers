@@ -31,4 +31,15 @@ component displayname="GeotiffLayer" extends="Layer" {
 
         return this;
     }
+
+    public string function getStatus()
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        var status = mumps.get("geodigraph", ["processes", this .extensions.processorId, "statusMessage"]);
+
+        return status;
+    }
+
 }

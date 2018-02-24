@@ -78,17 +78,12 @@
                         <ul class="nav nav-second-level">                                
                             <li><a href="#" onclick="addBaseLayer();" data-toggle="modal" data-target="#dlgAddBaseLayer">Add Base Layer</a></li>
                             <li><a href="#" onclick="addGeoTiffLayer();" data-toggle="modal" data-target="#dlgAddGeoTIFF">Add GeoTIFF Layer</a></li>
+                            <li><a href="#" onclick="window.map.measureArea();">Measure Area</a></li>
+                            <li><a href="#" onclick="window.map.measureLength();">Measure Length</a></li>
                             <!--- <li><a href="#" onclick="">Add Parcel Layer</a></li> 
                             <li><a href="#" onclick="">Manage Layers</a></li>    --->                                               
                         </ul>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-compass"></i> <span class="nav-label">Measure</span><span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level collapse">
-                            <li><a href="#" onclick="">Length</a></li>
-                            <li><a href="#" onclick="">Area</a></li>
-                        </ul>
-                    </li>   
+                    </li>                   
                     <li>
                         <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Users &amp; Companies</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">

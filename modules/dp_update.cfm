@@ -18,7 +18,7 @@ switch(url.newState) {
     case 1:
         newStatus = "DP_PROCESSING";
         statStr = "processing on node " & process.node;
-        statSum = "Layer began processing";
+        statSum = "Layer is processing on " & process.node;
         icon = "fa-spinner";
         break;
     case 3:
@@ -26,6 +26,7 @@ switch(url.newState) {
         statStr = "finished processing";
         statSum = "Layer completed processing";
         icon = "fa-check";
+        mumps.set("geodigraph", ["layers", process.layerId, "ready"], 1);
         break;
     case 2:
         newStatus = "DP_FAILED";
@@ -36,6 +37,7 @@ switch(url.newState) {
 }
 
 mumps.set("geodigraph", ["processes", url.distributedProcessId, "status"], newStatus);
+mumps.set("geodigraph", ["processes", url.distributedProcessId, "statusMessage"], statSum);
 
 layer = util.getLayerObject(process.layerId);
 
@@ -48,6 +50,7 @@ var notification = new Notification({
 
 for(user in layer.getNotifyTargets()) {
     notification.send(user);
+    user.setUiRefresh();
 }
 
 mumps.close();
