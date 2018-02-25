@@ -24,36 +24,6 @@
 
                         <input type="text" name="baseLayerUrl" class="form-control" placeholder="URL">                        
                     </div>
-                    <div class="form-group">
-                        <label>Share with</label> 
-
-                        <div class="radio"><label><input type="radio" name="baseLayerAddTo" value="allUsers"> All users</label></div>
-
-                        <div class="radio"><label><input type="radio" name="baseLayerAddTo" value="existingUser"> Existing user <select name="baseLayerExistingUsers" id="baseLayerExistingUsers" size="1"><option value="foo">John Willis</option></select></label></div>
-
-                        <cfif session.admin>
-                            <div class="radio"><label><input type="radio" name="baseLayerAddTo" value="existingCompany"> Existing company <select name="baseLayerExistingCompanies" id="baseLayerExistingCompanies" size="1"><option value="foo">Geodigraph</option></select></label></div>
-                        </cfif>
-
-                    </div>
-                    <div class="form-group">
-                        <label>Personal layer display</label>
-                        <cfif session.admin>
-                            <div class="checkbox">
-                                <label><input type="checkbox" name="addBaseToSelectedPersonal"> Add to selected group's personal layers</label>
-                            </div>
-                        </cfif>
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="addBaseToMyPersonal"> Add to my personal layers</label>
-                        </div>
-                        <cfif session.admin>
-                            <br>
-                            <div class="checkbox">
-                                <label><input type="checkbox" name="addBaseToAllNewAccounts"> Add to all new user accounts</label>
-                            </div>
-                        </cfif>
-                    </div>
-
                 </form>
             </div>
             <div class="modal-footer">

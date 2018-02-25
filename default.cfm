@@ -24,8 +24,10 @@
     <link href="css/leaflet.css" rel="stylesheet">
     <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
     <link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
-
+    <link href="css/leaflet-measure.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css" rel="stylesheet">
+<!---     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/> --->
+
 
     <link rel="shortcut icon" href="img/geodigraph_icon.png">
 
@@ -78,8 +80,6 @@
                         <ul class="nav nav-second-level">                                
                             <li><a href="#" onclick="addBaseLayer();" data-toggle="modal" data-target="#dlgAddBaseLayer">Add Base Layer</a></li>
                             <li><a href="#" onclick="addGeoTiffLayer();" data-toggle="modal" data-target="#dlgAddGeoTIFF">Add GeoTIFF Layer</a></li>
-                            <li><a href="#" onclick="window.map.measureArea();">Measure Area</a></li>
-                            <li><a href="#" onclick="window.map.measureLength();">Measure Length</a></li>
                             <!--- <li><a href="#" onclick="">Add Parcel Layer</a></li> 
                             <li><a href="#" onclick="">Manage Layers</a></li>    --->                                               
                         </ul>
@@ -213,11 +213,13 @@
 
 <!-- Leaflet stuff -->
 <script src="js/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
-
+<!--- <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script> --->
+<script src="js/leaflet-measure.js"></script>
 <!-- Geodigraph stuff -->
 <script src="js/gis.js"></script>
 <script src="js/geolayers.js"></script>
+
 
 
 <script>

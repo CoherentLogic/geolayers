@@ -129,74 +129,14 @@ function GlMap(opts, done)
     this.leafletMap.on('moveend', mapPosChanged);
     this.leafletMap.on('zoomend', mapPosChanged);  
 
-    this.leafletMap.on('click', function(e) {
-        if(self.measuring) {
-
-            if(self.measurementPolygon) {
-                self.measurementPolygon.removeFrom(self.leafletMap);
-            }
-
-            if(self.measurementPolyline) {
-                self.measurementPolyline.removeFrom(self.leafletMap);
-            }
-
-            self.measurementCoordinates.push(e.latlng);
-            
-            self.measurementPolygon = L.polygon(self.measurementCoordinates, {color: 'green'});
-            self.measurementPolyline = L.polyline(self.measurementCoordinates, {color: 'green'});
-
-            switch(self.measureMode) {
-            case 'area':
-                self.measurementPolygon.addTo(self.leafletMap);
-                break;
-            case 'length':
-                self.measurementPolyline.addTo(self.leafletMap);
-                break;
-            }
-
-        }
-    });
-
-    this.measurementCoordinates = [];
-    this.measuring = false;
-    this.measurementPolygon = null;
-    this.measurementPolyline = null;
-    this.measureMode = null;
+    this.measureControl = new L.Control.Measure();
+    this.measureControl.addTo(this.leafletMap);
 
     if(done) done(this);
     
     return this;
 }
 
-GlMap.prototype.measureArea = function() {
-    if(this.measurementPolygon) {
-        this.measurementPolygon.removeFrom(this.leafletMap);
-    }
-
-    if(this.measurementPolyline) {
-        this.measurementPolyline.removeFrom(this.leafletMap);
-    }
-
-    this.measurementCoordinates = [];
-
-    this.measureMode = 'area';
-    this.measuring = true;
-};
-
-GlMap.prototype.measureLength = function() {
-    if(this.measurementPolygon) {
-        this.measurementPolygon.removeFrom(this.leafletMap);
-    }
-
-    if(this.measurementPolyline) {
-        this.measurementPolyline.removeFrom(this.leafletMap);
-    }
-
-    this.measurementCoordinates = [];
-
-    this.measureMode = 'length';
-    this.measuring = true;
-};
 
 
 GlMap.prototype.hideLayer = function(layerId) {
@@ -373,3 +313,20 @@ function getAllUrlParams(url) {
 
   return obj;
 }
+
+L.Polyline = L.Polyline.include({
+    getDistance: function(system) {
+        // distance in meters
+        var mDistanse = 0,
+            length = this._latlngs.length;
+        for (var i = 1; i < length; i++) {
+            mDistanse += this._latlngs[i].distanceTo(this._latlngs[i - 1]);
+        }
+        // optional
+        if (system === 'imperial') {
+            return mDistanse / 1609.34;
+        } else {
+            return mDistanse / 1000;
+        }
+    }
+});
