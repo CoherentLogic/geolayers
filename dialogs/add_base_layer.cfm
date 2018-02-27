@@ -17,12 +17,16 @@
                         <input type="text" name="baseLayerAttribution" class="form-control" placeholder="Attribution"><br>
 
                         <input type="text" name="baseLayerCopyright" class="form-control" placeholder="Copyright"><br>
+                        <div style="display:none;">
+                        <input type="text" name="baseLayerMinZoom" id="baseLayerMinZoom" class="form-control" placeholder="Minimum zoom level"><br>
 
-                        <input type="text" name="baseLayerMinZoom" class="form-control" placeholder="Minimum zoom level"><br>
-
-                        <input type="text" name="baseLayerMaxZoom" class="form-control" placeholder="Maximum zoom level"><br>
-
+                        <input type="text" name="baseLayerMaxZoom" id="baseLayerMaxZoom" class="form-control" placeholder="Maximum zoom level"><br>
+                        </div>
                         <input type="text" name="baseLayerUrl" class="form-control" placeholder="URL">                        
+                    </div>
+                    <div class="form-group">
+                        <label>Zoom range</label>
+                        <div id="base_zoom_range"></div>
                     </div>
                 </form>
             </div>

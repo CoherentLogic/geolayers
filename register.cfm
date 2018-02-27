@@ -35,25 +35,21 @@
             
             addUserToCompany(user.email, user.company);
             setUserCompany(user.email, user.company); 
-
-            session.email = user.email;
-            session.firstName = user.firstName;
-            session.lastName = user.lastName;
-            session.company = user.company;
-            session.zip = user.zip;
-            session.picture = "img/placeholder.png"
-            session.loggedIn = true;
-            session.account = user;
-
-            if(user.admin == 1) {
-                session.admin = true;
-            }
-            else {
-                session.admin = false;
-            }        
+            
         </cfscript> 
 
-        <cflocation url="default.cfm">
+        <div class="middle-box text-center loginscreen animated fadeInDown">
+            <div>
+                <div>
+
+                    <h1 class="logo-name"><img src="img/login-header.png"></h1>
+
+                </div>
+                <h3>Thank you!</h3>
+                <p>Please check your e-mail for a message you can use to verify your new account.</p>
+            </div>
+        </div>
+
 
         
     <cfelse>

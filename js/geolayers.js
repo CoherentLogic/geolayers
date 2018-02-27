@@ -83,10 +83,16 @@ geodigraph = {
                     map.layers[layerId].leafletLayer.bringToBack();
                     row.insertAfter(row.next());
                 }
-
-                
             });
-        });
+
+            $(".edit-layer").click(function() {
+                var row = $(this).parents("tr:first");
+                var layerId = row.attr('id').split("_")[1];               
+
+                editLayer(layerId);
+            });
+
+        }); // end of handler for $.get()
     },
 
     // initialization
@@ -95,6 +101,8 @@ geodigraph = {
         initializeGis({
             baseUrl: geodigraph.baseUrl
         });
+
+
 
         geodigraph.updateLayers();
 
@@ -110,6 +118,44 @@ geodigraph = {
 
             });
 
+        });
+
+        var range_slider = document.getElementById('geotiff_zoom_range');
+        range_slider.innerHtml = "";
+        
+        noUiSlider.create(range_slider, {
+            start: [ 17, 23 ],
+            behaviour: 'drag',
+            connect: true,
+            step: 1,
+            range: {
+                'min':  0,
+                'max':  31
+            }
+        });
+
+        range_slider.noUiSlider.on('update', function (values, handle, unencoded, tap, positions) {
+            $("#geoTiffMinZoom").val(parseInt(values[0]));
+            $("#geoTiffMaxZoom").val(parseInt(values[1]));
+        });
+
+        range_slider = document.getElementById('base_zoom_range');
+        range_slider.innerHtml = "";
+        
+        noUiSlider.create(range_slider, {
+            start: [ 10, 25 ],
+            behaviour: 'drag',
+            connect: true,
+            step: 1,
+            range: {
+                'min':  1,
+                'max':  50
+            }
+        });
+
+        range_slider.noUiSlider.on('update', function (values, handle, unencoded, tap, positions) {
+            $("#baseLayerMinZoom").val(parseInt(values[0]));
+            $("#baseLayerMaxZoom").val(parseInt(values[1]));            
         });
 
         var resizeHandler = function () {
@@ -362,12 +408,20 @@ function addGeoTiffLayer()
 {
     geodigraph.updateSelects();
     $("#geoTiffLayerId").val(uuidv1());
+
+    
+
+    $("#dlgAddGeoTIFF").modal();
 }
 
 function addBaseLayer()
 {
     geodigraph.updateSelects();
     $("#baseLayerId").val(uuidv1());
+
+    
+
+    $("#dlgAddBaseLayer").modal();
 }
 
 function submitGeoTiffLayer()
@@ -376,4 +430,99 @@ function submitGeoTiffLayer()
     $("#ichk-uploading").iCheck();
     $("#ichk-uploading").iCheck('disable');    
     submitFormSilent('frmAddGeoTiffLayer');
+}
+
+function addShare(event)
+{
+    var id = $("#editLayerId").val();
+    var url = '/modules/share_layer.cfm?layerId=' + id + '&email=' + escape(event.item);
+
+    $.get(url, function(data) {
+        if(!data.success) {
+            $('#editShares').off('beforeItemRemove');
+            $("#editShares").tagsinput('remove', event.item);
+            $("#editShares").on('beforeItemRemove', removeShare);
+            $("#layerShareError").html(data.message);            
+        }
+    });
+}
+
+function removeShare(event)
+{
+    var id = $("#editLayerId").val();
+    var url = '/modules/unshare_layer.cfm?layerId=' + id + '&email=' + escape(event.item);
+
+    $.get(url, function(data) {
+        if(!data.success) {
+            $('#editShares').off('beforeItemAdd');
+            $("#editShares").tagsinput('add', event.item);
+            $('#editShares').on('beforeItemAdd', addShare);
+            $("#layerShareError").html(data.message);           
+        }
+    });    
+}
+
+var changeTimer = false;
+function editLayer(id)
+{
+    $(".layer-edit-control").on("keyup", function(event) {
+        if(changeTimer) clearTimeout(changeTimer);
+        changeTimer = setTimeout(function() {
+            var url = '/dialogs/edit_layer_submit.cfm?layerId=' + $("#editLayerId").val();
+            url += '&name=' + escape($("#editLayerName").val());
+            url += '&attribution=' + escape($("#editAttribution").val());
+            url += '&copyright=' + escape($("#editCopyright").val());
+
+            $.get(url, function(data) {
+                if(!data.success) {
+                    $("#layerEditError").html(data.message);
+                }
+            });
+
+        }, 300);
+    });
+
+    $('#editShares').tagsinput({
+        tagClass: 'label label-primary'
+    });
+
+    $('#editShares').off('beforeItemAdd');
+    $('#editShares').off('beforeItemRemove');
+
+    $('#editShares').tagsinput('removeAll');
+
+    $.get('/modules/get_layer.cfm?layerId=' + id, function(data) {
+        
+        if(data.success) {
+
+            $("#editAttribution").val(data.attribution);
+            $("#editCopyright").val(data.copyright);
+            $("#editLayerId").val(id);
+            $("#editLayerName").val(data.name);
+
+            if(data.originalImage) {
+                $("#editGeotiffProps").show();
+                $("#originalImage").html('<a href="' + data.originalImage + '" target="about:blank">Download Original Image</a>');
+            }
+            else {
+                $("#editGeotiffProps").hide();
+            }
+
+            var shareList = "";
+            for(index in data.shares) {
+                $("#editShares").tagsinput('add', data.shares[index].email);
+            }
+
+            $('#editShares').on('beforeItemAdd', addShare);
+            $("#editShares").on('beforeItemRemove', removeShare);
+
+
+            $("#dlgEditLayer").modal();
+        }
+        else {
+            console.log("ERROR! %o", data);
+        }
+    });
+
+    
 }

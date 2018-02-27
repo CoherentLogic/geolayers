@@ -10,6 +10,8 @@ component displayname=Account output=false extends="Util" {
         this.zip = "";
         this.admin = false;
         this.companies = [];
+        this.verified = false;
+        this.verificationCode = createUUID();
 
         this.saved = false;
 
@@ -39,6 +41,14 @@ component displayname=Account output=false extends="Util" {
         this.passwordHash = a.passwordHash;
         this.picture = a.picture;
         this.zip = a.zip;
+        this.verificationCode = a.verificationCode;
+
+        if(a.verified == 1) {
+            this.verified = true;
+        } 
+        else {
+            this.verified = false;
+        }
 
         if(a.admin == 1) {
             this.admin = true;
@@ -63,11 +73,16 @@ component displayname=Account output=false extends="Util" {
             throw(type="AccountExists", message="User account already exists");
         }
 
-        if(existingAccounts == false) {
+        if(existingAccounts == false && this.admin == 0) {
             this.admin = 1;
         }
         else {
             this.admin = 0;
+        }
+
+        var verified = 0;
+        if(this.verified == true) {
+            verified = 1;
         }
 
         accountStruct = {
@@ -76,11 +91,15 @@ component displayname=Account output=false extends="Util" {
             passwordHash: this.passwordHash,
             picture: this.picture,
             zip: this.zip,
-            admin: this.admin
+            admin: this.admin,
+            verificationCode: this.verificationCode,
+            verified: verified
         };
 
 
         glob.setObject(accountStruct);
+
+        module template="/modules/send_email.cfm" caption="Please verify your e-mail address" message="Please click on the link to verify your e-mail address." link="https://maps.geodigraph.com/verify.cfm?email=#this.email#&code=#this.verificationCode#" recipient=this.email;
 
 
         this.saved = true;

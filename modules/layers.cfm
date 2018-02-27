@@ -19,6 +19,7 @@
                     <th>Layer</th>
                     <th>Opacity</th>
                     <th>Order</th>
+                    <th>&nbsp;</th>
                 </tr>
             </thead>
             <tbody id="layers-tbody">
@@ -63,7 +64,7 @@
                                 <cfif layer.ready GT 0>
                                     <td><a href="##" class="layer-center">#layer.name#</a></td>
                                 <cfelse>
-                                    <td colspan="3">#layer.name# (#trim(layers[id].object.getStatus())#)</td>
+                                    <td colspan="4">#layer.name# (#trim(layers[id].object.getStatus())#)</td>
                                 </cfif>
                             <cfelse>
                                     <td>#layer.name#</td>
@@ -79,7 +80,12 @@
                                 <td>
                                     <a href="##"><i class="fa fa-chevron-down layer-down"></i></a>
                                     <a href="##"><i class="fa fa-chevron-up layer-up"></i></a>
-                                </td>                                                           
+                                </td>   
+                                <td>
+                                    <cfif layers[id].layer.contributor EQ session.account.email>
+                                        <a  href="##" class="edit-layer"><i class="fa fa-edit"></i></a>
+                                    </cfif>                                   
+                                </td>                                                        
                             </cfif>
                         </tr>
                     </cfoutput>

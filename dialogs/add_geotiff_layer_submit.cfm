@@ -9,8 +9,7 @@
         contributor: session.account.email
     });
 
-    layer.grantUserAccess(session.account);
-    layer.share(session.account, true, 2, 50);                      
+    layer.addToAccount(session.account, true, 2, 50);                      
 
     filename = "/home/geodigraph/webapps/maps/pool/inbound/staging/#layer.id#.tif";
     fileUpload(filename, "geoTiffFile");

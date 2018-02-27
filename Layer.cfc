@@ -269,8 +269,9 @@ component displayname="Layer" extends="Util" {
         global.close();
     }
 
-    public void function share(required Account user, required boolean enabled, required number zIndex, required number opacity)
+    public void function addToAccount(required Account user, required boolean enabled, required number zIndex, required number opacity)
     {
+
         var global = new lib.cfmumps.Global("geodigraph", ["accounts", arguments.user.email, "layers", this.id]);
 
         var en = 0;
@@ -286,6 +287,26 @@ component displayname="Layer" extends="Util" {
 
         global.close();
 
+        this.grantUserAccess(arguments.user);
+        this.addNotifyTarget(arguments.user);
+        arguments.user.setUiRefresh();
+
+    }
+
+    public void function share(required Account user, required boolean enabled, required number zIndex, required number opacity)
+    {
+        
+        this.addToAccount(arguments.user, arguments.enabled, arguments.zIndex, arguments.opacity);
+
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        mumps.set("geodigraph", ["shares", "byAccount", arguments.user.email, this.id], "");
+        mumps.set("geodigraph", ["shares", "byLayer", this.id, arguments.user.email], "");
+
+        mumps.close();
+
+
         var notification = new Notification({
             caption: "A layer has been shared",
             message: arguments.user.getFullName() & " has shared a new base layer, " & this.name & ", with you.",
@@ -294,15 +315,49 @@ component displayname="Layer" extends="Util" {
         });
 
         notification.send(arguments.user);
+        
+    }
 
-        this.grantUserAccess(arguments.user);
-        this.addNotifyTarget(arguments.user);
+    public array function getShares()
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open(); 
 
-        arguments.user.setUiRefresh();
+        var shares = [];
+
+        var lastResult = false;
+        var email = "";
+
+        while(lastResult == false) {
+            order = mumps.order("geodigraph", ["shares", "byLayer", this.id, email]);
+            lastResult = order.lastResult;
+            email = order.value;
+
+            if(email != "") {
+                shares.append(new Account(email));
+            }
+        }
+
+        mumps.close();
+
+        return shares;
+    }
+
+    public void function removeFromAccount(required Account user)
+    {
+        this.unshare(arguments.user);
     }
 
     public void function unshare(required Account user)
     {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        mumps.kill("geodigraph", ["shares", "byLayer", this.id, arguments.user.email]);
+        mumps.kill("geodigraph", ["shares", "byAccount", arguments.user.email, this.id]);
+
+        mumps.close();
+
         var global = new lib.cfmumps.Global("geodigraph", ["accounts", arguments.user.email, "layers", this.id]);
         global.delete();
 

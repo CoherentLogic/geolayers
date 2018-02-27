@@ -25,37 +25,44 @@
             account = new Account();
 
             try {
-                account.open(form.email);
+                account.open(form.email);               
 
-                if(account.passwordHash == pwh) {
-                    session.email = form.email;
-                    session.firstName = account.firstName;
-                    session.lastName = account.lastName;
-                    if(account.picture != "") {
-                        session.picture = account.picture;
-                    }  
-                    else {
-                        session.picture = "img/placeholder.png";
+                if(account.verified) {
+                    verified = true;
+                    if(account.passwordHash == pwh) {                                
+                        session.email = form.email;
+                        session.firstName = account.firstName;
+                        session.lastName = account.lastName;
+                        if(account.picture != "") {
+                            session.picture = account.picture;
+                        }  
+                        else {
+                            session.picture = "img/placeholder.png";
+                        }
+                        session.company = account.company;
+                        session.zip = account.zip;
+                        session.loggedIn = true;
+
+                        account.saveSessionId();
+
+                        session.admin = account.admin;
+
+                        session.account = account;
+
+                        if(isDefined("form.showLayer")) {
+                            location("default.cfm?showLayer=" & form.showLayer);
+                        }
+                        else {
+                            location("default.cfm");
+                        }
                     }
-                    session.company = account.company;
-                    session.zip = account.zip;
-                    session.loggedIn = true;
-
-                    account.saveSessionId();
-
-                    session.admin = account.admin;
-
-                    session.account = account;
-
-                    if(isDefined("form.showLayer")) {
-                        location("default.cfm?showLayer=" & form.showLayer);
-                    }
-                    else {
-                        location("default.cfm");
+                    else {                        
+                        errorMessage = "Invalid user credentials.";
                     }
                 }
-                else {
-                    errorMessage = "Invalid user credentials.";
+                else { // account not verified
+                    verified = false;
+                    errorMessage = "Account not verified";
                 }
             }
             catch(InvalidAccount ex) {

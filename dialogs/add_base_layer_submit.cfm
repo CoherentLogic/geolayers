@@ -11,8 +11,7 @@
         contributor: session.account.email
     });
 
-    layer.grantUserAccess(session.account);
-    layer.share(session.account, true, 1, 100);                   
+    layer.addToAccount(session.account, true, 1, 100);                   
 
 
 </cfscript>

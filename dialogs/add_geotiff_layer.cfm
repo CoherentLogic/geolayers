@@ -15,19 +15,20 @@
                         <input type="text" name="geoTiffLayerName" id="geoTiffLayerName" class="form-control" placeholder="Layer name"><br>
                         <input type="text" name="geoTiffAttribution" class="form-control" placeholder="Attribution"><br> 
                         <input type="text" name="geoTiffCopyright" class="form-control" placeholder="Copyright"><br> 
-                        <input type="text" name="geoTiffMinZoom" class="form-control" placeholder="Minimum zoom level"><br> 
-                        <input type="text" name="geoTiffMaxZoom" class="form-control" placeholder="Maximum zoom level"><br>                      
+                        <div style="display:none;">
+                        <input type="text" name="geoTiffMinZoom" id="geoTiffMinZoom" class="form-control" placeholder="Minimum zoom level"><br> 
+                        <input type="text" name="geoTiffMaxZoom" id="geoTiffMaxZoom" class="form-control" placeholder="Maximum zoom level"><br> 
+                        </div>                     
+                    </div>
+                    <div class="form-group">
+                        <label>Zoom range</label>
+                        <div id="geotiff_zoom_range"></div>
                     </div>
                     <div class="form-group">
                         <label>GeoTIFF file</label>
                         <input type="file" name="geoTiffFile" class="form-control" placeholder="GeoTIFF file">
                     </div>
-
                     
-                   
-              
-
-
                 </form>
             </div>
             <div class="modal-footer">

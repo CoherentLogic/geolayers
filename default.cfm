@@ -26,6 +26,17 @@
     <link href="css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
     <link href="css/leaflet-measure.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css" rel="stylesheet">
+    
+    <link href="css/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet">
+
+<!---     <style>
+        .bootstrap-tagsinput {
+          width: auto;
+          margin: auto 0;
+          display: block;
+        }
+    </style> --->
+
 <!---     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/> --->
 
 
@@ -41,6 +52,7 @@
     <cfinclude template="dialogs/add_company.cfm">
     <cfinclude template="dialogs/debug.cfm">
     <cfinclude template="dialogs/layer_controls.cfm">
+    <cfinclude template="dialogs/edit_layer.cfm">
     <!---<div id="map" class="map-container"></div>--->
 
     <cfif not session.loggedIn>
@@ -78,8 +90,8 @@
                     <li>
                         <a href="#"><i class="fa fa-globe"></i> <span class="nav-label">Map</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">                                
-                            <li><a href="#" onclick="addBaseLayer();" data-toggle="modal" data-target="#dlgAddBaseLayer">Add Base Layer</a></li>
-                            <li><a href="#" onclick="addGeoTiffLayer();" data-toggle="modal" data-target="#dlgAddGeoTIFF">Add GeoTIFF Layer</a></li>
+                            <li><a href="#" onclick="addBaseLayer();">Add Base Layer</a></li>
+                            <li><a href="#" onclick="addGeoTiffLayer();">Add GeoTIFF Layer</a></li>
                             <!--- <li><a href="#" onclick="">Add Parcel Layer</a></li> 
                             <li><a href="#" onclick="">Manage Layers</a></li>    --->                                               
                         </ul>
@@ -207,6 +219,10 @@
 
 <!-- NouSlider -->
 <script src="js/plugins/nouslider/jquery.nouislider.min.js"></script>
+
+<!-- Tags Input -->
+<script src="js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+
 
 <!-- uuid -->
 <script src="https://wzrd.in/standalone/uuid%2Fv1@latest"></script>

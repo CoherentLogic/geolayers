@@ -60,7 +60,7 @@ function initializeLayers(m) {
                         l.tms = false;                    
                         break;
                     case 'geotiff':
-                        console.log(m.opts.baseUrl );
+                        console.log(m.opts.baseUrl);
                         l.url = 'https://maps.geodigraph.com' + m.opts.baseUrl + '/pool/tiles/' + id + '/{z}/{x}/{y}.png';
                         l.tms = true;
                         break;                    
