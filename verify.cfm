@@ -2,7 +2,6 @@
 <html>
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -13,31 +12,42 @@
     <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-
 </head>
 
 <body class="gray-bg">
 
     <cfif IsDefined("form.submit")>        
         <cfscript>
-            
+            var glob = new lib.cfmumps.Global("geodigraph", ["accounts", form.email]);
+            o = {};
+
+            if(isDefined("form.password")) {
+                o.passwordHash = hash(form.password, "SHA-256");
+            }
+
+            if(isDefined("form.firstName")) {
+                o.firstName = form.firstName;
+            }
+
+            if(isDefined("form.lastName")) {
+                o.lastName = form.lastName;
+            }
+
+            if(isDefined("form.zip")) {
+                o.zip = form.zip;
+            }
+
+            glob.setObject(o);
 
         </cfscript>        
+
+        <cflocation url="login.cfm">
     <cfelse>
         <cfscript>
         account = new Account(url.email);
 
         if(account.verificationCode == url.code) {
-
-            o = {
-                verificationCode: "",
-                verified: 1
-            };
-
-            glob = new lib.cfmumps.Global("geodigraph", ["accounts", url.email]);
-            glob.setObject(o);
-            glob.close();
-
+        
             needMoreInfo = false;
 
             if(account.firstName == "") {
@@ -55,6 +65,22 @@
             if(account.zip == "") {
                 needMoreInfo = true;
             }
+
+            o = {
+                verificationCode: "",
+                verified: 1
+            };
+
+            if(needMoreInfo) {
+                o.needMoreInfo = 1;
+            }
+            else {
+                o.needMoreInfo = 0;
+            }
+
+            glob = new lib.cfmumps.Global("geodigraph", ["accounts", url.email]);
+            glob.setObject(o);
+            glob.close();
 
             verifyGood = true;
         }
@@ -75,8 +101,12 @@
                         <h3>Set Up Account</h3>
                         <p>Your account has been verified. Please fill out this form to complete the account setup process.</p>
 
-                        <form class="m-t" role="form" action="register.cfm"  method="post">
-                            
+                        <p><strong>You must complete this step before leaving this page. If you close this page, you will lose access to your account.</strong></p>
+
+                        <form class="m-t" role="form" action="verify.cfm"  method="post">
+                            <cfoutput>
+                                <input type="hidden" name="email" value="#account.email#">
+                            </cfoutput>
                             <cfif account.passwordHash EQ "">
                                 <div class="form-group">
                                     <input type="password" class="form-control" placeholder="Password" required="" name="password">

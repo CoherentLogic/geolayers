@@ -1,6 +1,7 @@
 geodigraph = {
     // base config
     baseUrl: "",
+    session: null,
 
     // poller config
     pollers: [],
@@ -22,7 +23,6 @@ geodigraph = {
 
         return count;
     },
-
 
     updateLayers: function() {
         $.get(geodigraph.baseUrl + "/modules/layers.cfm", function(data) {
@@ -101,8 +101,6 @@ geodigraph = {
         initializeGis({
             baseUrl: geodigraph.baseUrl
         });
-
-
 
         geodigraph.updateLayers();
 
@@ -183,11 +181,9 @@ geodigraph = {
             $.get(geodigraph.baseUrl + "/modules/notifications.cfm", function(notifications) {
 
                 for(index in notifications) {
-
                     var n = notifications[index];                    
                     var notification = new GlNotification(n.id, n.time, n.icon, n.caption, n.message, n.link, n.delivered, n.read);
                     installNotification(notification);
-
                 }                
 
             });
@@ -210,15 +206,28 @@ geodigraph = {
             });
         });
 
+        var sessionPoller = new Poller("retrieve session data", function() {
+            $.get("/modules/get_login_session.cfm", function(data) {
+                if(data.success) {
+                    geodigraph.session = data;
+
+                    $("#sb-user-name").html(geodigraph.session.name);
+                    $("#sb-user-picture").attr("src", geodigraph.session.picture);
+                }
+                else {
+                    geodigraph.session = null;
+                }
+            });  
+        });
+
         installPoller(diskSpacePoller);
         installPoller(notificationsPoller);
         installPoller(notificationDeliveryPoller);
         installPoller(layerRefreshPoller);
+        installPoller(sessionPoller);
 
         startPoll();
     },
-
-
 
     updateSelects: function() {
         var companySelects = ["#baseLayerExistingCompanies", "#geoTiffExistingCompanies", "#addUserCompany"];
@@ -462,9 +471,48 @@ function removeShare(event)
     });    
 }
 
+function viewProfile(email) 
+{
+
+}
+
 var changeTimer = false;
+function editProfile()
+{
+    $("#ep-firstname").val(geodigraph.session.firstName);
+    $("#ep-lastname").val(geodigraph.session.lastName);
+    $("#ep-zip").val(geodigraph.session.zip);
+    $("#ep-picture").attr("src", geodigraph.session.picture);
+
+    $(".profile-edit-control").on("keyup", function(event) {
+        if(changeTimer) clearTimeout(changeTimer);
+        changeTimer = setTimeout(function() {
+            var url = '/modules/set_profile_info.cfm?firstName=' + escape($("#ep-firstname").val());
+            url += '&lastName=' + escape($("#ep-lastname").val());
+            url += '&zip=' + escape($("#ep-zip").val());            
+
+            $.get(url, function(data) {
+                if(!data.success) {
+                    alert(data.message);
+                }
+            });
+
+        }, 300);
+    });
+
+
+    $("#dlgEditProfile").modal();
+}
+
 function editLayer(id)
 {
+    if(geodigraph.session.admin) {
+        $("#editLayerAdmin").show();
+    }
+    else {
+        $("#editLayerAdmin").hide();
+    }
+
     $(".layer-edit-control").on("keyup", function(event) {
         if(changeTimer) clearTimeout(changeTimer);
         changeTimer = setTimeout(function() {
@@ -495,6 +543,47 @@ function editLayer(id)
         
         if(data.success) {
 
+            $('#make-layer-default').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+            
+            $('#make-layer-default').off('ifChecked');
+            $('#make-layer-default').off('ifUnchecked');
+
+
+            if(data.isDefault) {
+                $('#make-layer-default').iCheck('check');
+            }
+            else {
+                $('#make-layer-default').iCheck('uncheck');
+            }
+
+
+            if(geodigraph.session.admin) {                
+                $('#make-layer-default').on('ifChecked', function(event) {
+                    var url = "/modules/set_layer_default.cfm?layerId=" + id + "&default=1";
+                    $.get(url, function(data) {
+                        if(!data.success) {
+                            alert(data.message);
+                        }
+                    });
+                });
+
+                $('#make-layer-default').on('ifUnchecked', function(event) {
+                    var url = "/modules/set_layer_default.cfm?layerId=" + id + "&default=0";                    
+                    $.get(url, function(data) {
+                        if(!data.success) {
+                            alert(data.message);
+                        }
+                    });                    
+                });
+            }
+            else {
+                $('#make-layer-default').iCheck('disable');
+            }
+
+
             $("#editAttribution").val(data.attribution);
             $("#editCopyright").val(data.copyright);
             $("#editLayerId").val(id);
@@ -520,9 +609,7 @@ function editLayer(id)
             $("#dlgEditLayer").modal();
         }
         else {
-            console.log("ERROR! %o", data);
+            alert(data.message);
         }
     });
-
-    
 }

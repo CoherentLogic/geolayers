@@ -2,7 +2,7 @@
 <cfscript>
     util = createObject("component", "Util");
 
-    layer = Util.getLayerObject(url.layerId);
+    layer = util.getLayerObject(url.layerId);
 
     if(url.email == session.account.email) {
         o = {
@@ -44,12 +44,14 @@
             catch (any ex) {
 
                 a = new Account();
-                a.email = 
+                a.email = url.email;
+                a.save();
 
+                layer.share(a, true, zIndex, opacity);
 
                 o = {
-                    success: false,
-                    message: ex.message
+                    success: true,
+                    message: ""
                 };
             }
 
@@ -64,4 +66,4 @@
     writeOutput(serializeJSON(o));
 
 
-    </cfscript>
+</cfscript>

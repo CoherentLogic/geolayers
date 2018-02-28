@@ -37,7 +37,7 @@ component displayname=Account output=false extends="Util" {
         this.firstName = a.firstName;
         this.lastName = a.lastName;
         this.company = a.company;
-        this.companies = a.companies;
+        //this.companies = a.companies;
         this.passwordHash = a.passwordHash;
         this.picture = a.picture;
         this.zip = a.zip;
@@ -93,7 +93,8 @@ component displayname=Account output=false extends="Util" {
             zip: this.zip,
             admin: this.admin,
             verificationCode: this.verificationCode,
-            verified: verified
+            verified: verified,
+            company: this.email
         };
 
 

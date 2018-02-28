@@ -309,7 +309,7 @@ component displayname="Layer" extends="Util" {
 
         var notification = new Notification({
             caption: "A layer has been shared",
-            message: arguments.user.getFullName() & " has shared a new base layer, " & this.name & ", with you.",
+            message: session.account.getFullName() & " has shared a new base layer, " & this.name & ", with you.",
             link: "https://maps.geodigraph.com/default.cfm?showLayer=#this.id#",
             icon: "fa-map"
         });
@@ -367,24 +367,34 @@ component displayname="Layer" extends="Util" {
         arguments.user.setUiRefresh();
     }
 
+    public boolean function isDefault()
+    {
+        var global = new lib.cfmumps.Global("geodigraph", ["defaultLayers", this.id]);
+
+
+        return global.defined().defined;
+    }
+
     public void function setAsDefault()
     {
-        mumps = new lib.cfmumps.Mumps();
+        var mumps = new lib.cfmumps.Mumps();
         mumps.open();
 
         mumps.set("geodigraph", ["defaultLayers", this.id], "");
 
         mumps.close();
+
+        this.grantGlobalAccess();
     }
 
     public void function clearAsDefault()
     {
-        mumps = new lib.cfmumps.Mumps();
+        var mumps = new lib.cfmumps.Mumps();
         mumps.open();
 
-        mumps.kill("geodigraph", ["defaultLayers", arguments.layerId]);
+        mumps.kill("geodigraph", ["defaultLayers", this.id]);
 
-        mumps.close();
+        mumps.close();        
     }
 
 }

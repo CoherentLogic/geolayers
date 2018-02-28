@@ -29,16 +29,6 @@
     
     <link href="css/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet">
 
-<!---     <style>
-        .bootstrap-tagsinput {
-          width: auto;
-          margin: auto 0;
-          display: block;
-        }
-    </style> --->
-
-<!---     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/> --->
-
 
     <link rel="shortcut icon" href="img/geodigraph_icon.png">
 
@@ -53,7 +43,7 @@
     <cfinclude template="dialogs/debug.cfm">
     <cfinclude template="dialogs/layer_controls.cfm">
     <cfinclude template="dialogs/edit_layer.cfm">
-    <!---<div id="map" class="map-container"></div>--->
+    <cfinclude template="dialogs/edit_profile.cfm">
 
     <cfif not session.loggedIn>
         <cfif isDefined("url.showLayer")>
@@ -69,15 +59,15 @@
                     <li class="nav-header">
                         <div class="dropdown profile-element"> <span>
                             <cfoutput>
-                                <img alt="image" class="img-circle" width="48" src="#session.picture#" />
+                                <img id="sb-user-picture" alt="image" class="img-circle" width="48" src="#session.picture#" />
                             </cfoutput>
                         </span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><cfoutput>#session.firstName# #session.lastName# <cfif session.admin>(Administrator)</cfif></cfoutput></strong>
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold" id="sb-user-name"><span id="sb-user-name"><cfoutput>#session.firstName# #session.lastName# <cfif session.admin>(Administrator)</cfif></cfoutput></strong>
                             </span> <span class="text-muted text-xs block"><cfoutput>#session.company#</cfoutput> <b class="caret"></b></span> </span> </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                <li><a href="#">Edit Profile</a></li>
-                                <li><a href="#">Manage Account</a></li>
+                                <li><a href="#" onclick="editProfile();">Edit Profile</a></li>
+                                <!--- <li><a href="#">Manage Account</a></li> --->
                                 <li class="divider"></li>
                                 <li><a href="logout.cfm">Logout</a></li>
                             </ul>
@@ -109,9 +99,6 @@
                         <a href="#" onclick="geodigraph.updateSelects();" data-toggle="modal" data-target="#dlgDebug"><i class="fa fa-bug"></i> <span class="nav-label">Debug</span></a>
                     </li>               
                     </cfif>     
-
-
-
 
                 </ul>
 

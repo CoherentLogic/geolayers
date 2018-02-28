@@ -12,6 +12,7 @@ if((session.account.admin == true) || (layer.contributor == session.account.emai
         name: layer.name,
         attribution: layer.attribution,
         copyright: layer.copyright,
+        isDefault: layer.isDefault()
     };
 
     if(layer.renderer == "geotiff") {

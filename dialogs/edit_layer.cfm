@@ -26,7 +26,12 @@
                         <label>Shared with</label><br>
                         <input style="width: 540px !important;" class="tagsinput form-control" id="editShares" type="text" value="" placeholder="Type an e-mail address to share this layer"/><br>
                         <span id="layerShareError" style="color: red;"></span>
+                        <br>
+                        <div id="editLayerAdmin">                            
+                            <label><input type="checkbox" id="make-layer-default"> Deploy to all new accounts</label>                     
+                        </div>
                     </div>
+                    
                     <div class="form-group">
                         <label>Delete layer</label>
                         <div class="panel panel-default">
@@ -35,7 +40,7 @@
                                 <button type="button" class="btn btn-danger">Delete Layer</button>
                             </div>
                         </div>
-                    </div>
+                    </div>                    
                 </form>
             </div>
             <div class="modal-footer">
