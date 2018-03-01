@@ -33,7 +33,7 @@
                                 <form>
                                     <div class="form-group">
                                         <label>Profile picture</label><br>
-                                        <img id="ep-picture" width="50" height="50" style="margin: 20px;">
+                                        <img id="ep-picture" width="50" height="50" style="display: none;">
                                         <input class="form-control" type="file" name="profilePicture" id="ep-picture-upload">
                                         <div id="ep-picture-progress" class="filehandler-progress-bar">
                                             <div class="progress-bar"></div>

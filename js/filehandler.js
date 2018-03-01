@@ -60,14 +60,8 @@ class FileHandler {
 
         formData.append("file", this.file, this.name());
         formData.append("upload_file", true);
-
         
-
-        let index = null;
-        for(index in this.formFields) {            
-            formData.append(this.formFields[index], $("#" + this.formFields[index]).val());
-        }
-       
+	this.formFields.map(x => formData.append(x, $(`#${x}`).val()));       
 
         $.ajax({
             type: "POST",
