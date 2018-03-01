@@ -4,8 +4,6 @@
     <cfset attr=url>
 </cfif>
 
-<cfdump var="#attr#">
-
 <cfmail from="alerts@geodigraph.com" to="#attr.recipient#" subject="[Geodigraph] #attr.caption#" type="text/html">
     <cfoutput>
         <!DOCTYPE html>

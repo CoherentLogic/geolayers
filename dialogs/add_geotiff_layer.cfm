@@ -13,8 +13,8 @@
                         <label>Layer properties</label>
                         <input type="text" name="geoTiffLayerId" id="geoTiffLayerId" value="" style="display:none;">
                         <input type="text" name="geoTiffLayerName" id="geoTiffLayerName" class="form-control" placeholder="Layer name"><br>
-                        <input type="text" name="geoTiffAttribution" class="form-control" placeholder="Attribution"><br> 
-                        <input type="text" name="geoTiffCopyright" class="form-control" placeholder="Copyright"><br> 
+                        <input type="text" name="geoTiffAttribution" id="geoTiffAttribution" class="form-control" placeholder="Attribution"><br> 
+                        <input type="text" name="geoTiffCopyright" id="geoTiffCopyright" class="form-control" placeholder="Copyright"><br> 
                         <div style="display:none;">
                         <input type="text" name="geoTiffMinZoom" id="geoTiffMinZoom" class="form-control" placeholder="Minimum zoom level"><br> 
                         <input type="text" name="geoTiffMaxZoom" id="geoTiffMaxZoom" class="form-control" placeholder="Maximum zoom level"><br> 
@@ -26,14 +26,20 @@
                     </div>
                     <div class="form-group">
                         <label>GeoTIFF file</label>
-                        <input type="file" name="geoTiffFile" class="form-control" placeholder="GeoTIFF file">
+                        <input type="file" name="geoTiffFile" id="geoTiffFile" class="form-control" placeholder="GeoTIFF file">
+
+                        <label>File size:</label> <span id="geotiff-file-size"></span>
+                        <div id="geotiff-upload-progress" class="filehandler-progress-bar">
+                            <div class="progress-bar"></div>
+                            <div class="status">0%</div>
+                        </div>
                     </div>
                     
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="submitGeoTiffLayer();">Submit</button>
+                <button type="button" class="btn btn-primary" onclick="submitGeoTiffLayer();">Submit</button>
             </div>
         </div>
     </div>

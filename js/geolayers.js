@@ -415,30 +415,62 @@ function submitFormSilent(id, hideDiv)
 
 function addGeoTiffLayer()
 {
-    geodigraph.updateSelects();
+    document.getElementById("frmAddGeoTiffLayer").reset();
+
+    $("#geoTiffFile").on("change", function(event) {
+        let file = $(this)[0].files[0];
+
+        $("#geotiff-file-size").html(file.size);
+    });
+
+
     $("#geoTiffLayerId").val(uuidv1());
-
-    
-
+    $("#geoTiffMinZoom").val(17);
+    $("#geoTiffMaxZoom").val(23);
     $("#dlgAddGeoTIFF").modal();
 }
 
 function addBaseLayer()
 {
-    geodigraph.updateSelects();
-    $("#baseLayerId").val(uuidv1());
 
-    
+    document.getElementById("dlgAddBaseLayer").reset();
 
+    $("#baseLayerMinZoom").val(10);
+    $("#baseLayerMaxZoom").val(25);
+    $("#baseLayerId").val(uuidv1()); 
     $("#dlgAddBaseLayer").modal();
 }
 
 function submitGeoTiffLayer()
 {
-    $("#layers-tbody").append('<tr><td><i class="fa fa-upload"></i></td><td><input type="checkbox" id="ichk-uploading"></td><td colspan="3">' + $("#geoTiffLayerName").val() + ' (Uploading)</td></tr>');
-    $("#ichk-uploading").iCheck();
-    $("#ichk-uploading").iCheck('disable');    
-    submitFormSilent('frmAddGeoTiffLayer');
+    $("#layers-tbody").append('<tr><td><i class="fa fa-upload"></i></td><td><input type="checkbox" class="ichk-uploading"></td><td colspan="3">' + $("#geoTiffLayerName").val() + ' (Uploading)</td></tr>');
+    $(".ichk-uploading").iCheck();
+    $(".ichk-uploading").iCheck('disable');    
+    
+    var file = $("#geoTiffFile")[0].files[0];
+    var fh = new FileHandler(file, {
+        uploadHandler: "dialogs/add_geotiff_layer_submit.cfm",
+        progressBarId: "geotiff-upload-progress",
+        timeout: 999999,
+        formFields: [
+            "geoTiffLayerId",
+            "geoTiffLayerName",
+            "geoTiffAttribution",
+            "geoTiffCopyright",
+            "geoTiffMinZoom",
+            "geoTiffMaxZoom"
+        ],
+        success: function(data) {
+            $("#dlgAddGeoTIFF").modal('hide');
+        },
+        error: function(error) {
+            alert(error.message);
+        }
+    });
+
+    $("#geotiff-file-size").html(fh.size());
+
+    fh.upload();
 }
 
 function addShare(event)
@@ -498,6 +530,22 @@ function editProfile()
             });
 
         }, 300);
+    });
+
+    attachFileHandler("ep-picture-upload", {
+        uploadHandler: "dialogs/edit_profile_submit.cfm",
+        progressBarId: "ep-picture-progress",
+        timeout: 999999,
+        success: function(data) {
+            console.log(data);
+            $("#ep-picture").attr("src", "");
+            $("#sb-user-picture").attr("src", "");
+            $("#ep-picture").attr("src", data.newPicture);
+            $("#sb-user-picture").attr("src", data.newPicture);
+        },
+        error: function(error) {
+            console.log(error);
+        }
     });
 
 

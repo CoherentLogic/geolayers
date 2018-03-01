@@ -59,12 +59,12 @@
                     <li class="nav-header">
                         <div class="dropdown profile-element"> <span>
                             <cfoutput>
-                                <img id="sb-user-picture" alt="image" class="img-circle" width="48" src="#session.picture#" />
+                                <img id="sb-user-picture" alt="image" class="img-circle" width="48" src="#session.account.picture#" />
                             </cfoutput>
                         </span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold" id="sb-user-name"><span id="sb-user-name"><cfoutput>#session.firstName# #session.lastName# <cfif session.admin>(Administrator)</cfif></cfoutput></strong>
-                            </span> <span class="text-muted text-xs block"><cfoutput>#session.company#</cfoutput> <b class="caret"></b></span> </span> </a>
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold" id="sb-user-name"><span id="sb-user-name"><cfoutput>#session.firstName# #session.lastName# <cfif session.account.admin>(Administrator)</cfif></cfoutput></strong>
+                            </span> <span class="text-muted text-xs block"><cfoutput>#session.account.email#</cfoutput> <b class="caret"></b></span> </span> </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
                                 <li><a href="#" onclick="editProfile();">Edit Profile</a></li>
                                 <!--- <li><a href="#">Manage Account</a></li> --->
@@ -85,16 +85,18 @@
                             <!--- <li><a href="#" onclick="">Add Parcel Layer</a></li> 
                             <li><a href="#" onclick="">Manage Layers</a></li>    --->                                               
                         </ul>
-                    </li>                   
-                    <li>
-                        <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Users &amp; Companies</span><span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level collapse">
-                            <li><a href="#" onclick="geodigraph.updateSelects();" data-toggle="modal" data-target="#dlgAddUser">Add User</a></li>
-                            <li><a href="#" onclick="geodigraph.updateSelects();" data-toggle="modal" data-target="#dlgAddCompany">Add Company</a></li>
-                            <li><a href="#" onclick="geodigraph.updateSelects();">Manage Users &amp; Companies</a></li>
-                        </ul>
-                    </li>
-                    <cfif session.admin>
+                    </li>  
+                    <cfif session.account.admin>                 
+                        <li>
+                            <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Users</span><span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse">
+                                <li><a href="#" onclick="geodigraph.updateSelects();" data-toggle="modal" data-target="#dlgAddUser">Add User</a></li>
+                                <!---<li><a href="#" onclick="geodigraph.updateSelects();" data-toggle="modal" data-target="#dlgAddCompany">Add Company</a></li>--->
+                                <li><a href="#" onclick="geodigraph.updateSelects();">Manage Users &amp; Companies</a></li>
+                            </ul>
+                        </li>
+                    </cfif>
+                    <cfif session.account.admin>
                     <li>
                         <a href="#" onclick="geodigraph.updateSelects();" data-toggle="modal" data-target="#dlgDebug"><i class="fa fa-bug"></i> <span class="nav-label">Debug</span></a>
                     </li>               
@@ -220,6 +222,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script> --->
 <script src="js/leaflet-measure.js"></script>
 <!-- Geodigraph stuff -->
+<script src="js/filehandler.js"></script>
 <script src="js/gis.js"></script>
 <script src="js/geolayers.js"></script>
 

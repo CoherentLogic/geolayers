@@ -10,7 +10,8 @@
             <div class="modal-body">              
                 <div class="tabs-container">
                     <ul class="nav nav-tabs">                        
-                        <li class="active"><a data-toggle="tab" href="#ep-basic">Personal Info</a></li>                            
+                        <li class="active"><a data-toggle="tab" href="#ep-basic">Personal Info</a></li>    
+                        <li><a data-toggle="tab" href="#ep-picture">Profile Picture</a></li>                        
                         <li><a data-toggle="tab" href="#ep-layers">Personal Layer Display</a></li>                            
                     </ul>
                     <div class="tab-content">                            
@@ -25,19 +26,26 @@
                                     <label>ZIP code</label>
                                     <input type="text" id="ep-zip" name="ep-zip" class="form-control profile-edit-control" placeholder="Enter your ZIP code">
                                 </div>
-                                <form target="formTarget" action="dialogs/edit_profile_submit.cfm" method="post" id="frmEditProfile" enctype="multipart/form-data">
+                            </div>
+                        </div>
+                        <div id="ep-picture" class="tab-pane">
+                            <div class="panel-body">
+                                <form>
                                     <div class="form-group">
                                         <label>Profile picture</label><br>
                                         <img id="ep-picture" width="50" height="50" style="margin: 20px;">
-                                        <input class="form-control" type="file" name="profilePicture">
-
-                                    </div>
+                                        <input class="form-control" type="file" name="profilePicture" id="ep-picture-upload">
+                                        <div id="ep-picture-progress" class="filehandler-progress-bar">
+                                            <div class="progress-bar"></div>
+                                            <div class="status">0%</div>
+                                        </div>
+                                    </div>                                    
                                 </form>                          
                             </div>
                         </div>
                         <div id="ep-layers" class="tab-pane">
                             <div class="panel-body">
-c
+                                c
                             </div>
                         </div>
 

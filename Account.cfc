@@ -211,7 +211,7 @@ component displayname=Account output=false extends="Util" {
                     break;
                 }
 
-                layer.share(this, true, zIndex, opacity);
+                layer.addToAccount(this, true, zIndex, opacity);
 
             }
         }
