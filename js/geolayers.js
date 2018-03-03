@@ -415,11 +415,15 @@ function submitFormSilent(id, hideDiv)
 
 function addGeoTiffLayer()
 {
+    $("#geoTiffFormError").hide();
+    $("#geoTiffFormBody").show();
+
     document.getElementById("frmAddGeoTiffLayer").reset();
 
     $("#geoTiffFile").on("change", function(event) {
         let file = $(this)[0].files[0];
 
+        $("#geotiff-upload-controls").show();
         $("#geotiff-file-size").html(file.size);
     });
 
@@ -427,13 +431,27 @@ function addGeoTiffLayer()
     $("#geoTiffLayerId").val(uuidv1());
     $("#geoTiffMinZoom").val(17);
     $("#geoTiffMaxZoom").val(23);
+    $("#geotiff-upload-controls").hide();
     $("#dlgAddGeoTIFF").modal();
+}
+
+function deleteLayer(id)
+{
+    var url = "/modules/delete_layer.cfm?id=" + id;
+    $.get(url, function(data) {
+        if(data.success) {            
+            $("#dlgEditLayer").modal('hide');            
+        }
+        else {
+            alert(data.message);
+        }
+    });
 }
 
 function addBaseLayer()
 {
 
-    document.getElementById("dlgAddBaseLayer").reset();
+    document.getElementById("frmAddBaseLayer").reset();
 
     $("#baseLayerMinZoom").val(10);
     $("#baseLayerMaxZoom").val(25);
@@ -461,9 +479,18 @@ function submitGeoTiffLayer()
             "geoTiffMaxZoom"
         ],
         success: function(data) {
-            $("#dlgAddGeoTIFF").modal('hide');
+            if(data.success) {
+                $("#dlgAddGeoTIFF").modal('hide');
+            }
+            else {
+                $("#geoTiffError").html(data.message);
+
+                $("#geoTiffFormBody").hide();
+                $("#geoTiffFormError").show();                
+            }
         },
         error: function(error) {
+            console.log(error);
             alert(error.message);
         }
     });
@@ -554,6 +581,10 @@ function editProfile()
 
 function editLayer(id)
 {
+    $("#btn-delete-layer").on('click', function(e) {
+        deleteLayer(id);
+    });
+
     if(geodigraph.session.admin) {
         $("#editLayerAdmin").show();
     }

@@ -20,17 +20,25 @@ component displayname="DistributedProcess" {
             var totalProcessors = mumps.get("distproc", ["dp", "count"]);
 
             lock scope="Application" timeout="10" {
+
                 if(mumps.lock("distproc", ["dp", "current"], 10)) {
-                    var processorNumber = mumps.get("distproc", ["dp", "current"]);
 
-                    if(processorNumber < totalProcessors) {
-                        processorNumber++;
-                    }
-                    else {
-                        processorNumber = 1;
-                    }
+                    do {
+                        var processorNumber = mumps.get("distproc", ["dp", "current"]);
 
-                    mumps.set("distproc", ["dp", "current"], processorNumber);
+                        if(processorNumber < totalProcessors) {
+
+                            processorNumber++;
+                        }
+                        else {
+                            processorNumber = 1;
+                        }                    
+
+                        mumps.set("distproc", ["dp", "current"], processorNumber);
+
+                        var nodeId = mumps.get("distproc", ["dp", "processors", processorNumber]);
+                        var procStatus = mumps.get("distproc", ["dp", "nodes", nodeId]);
+                    } while(procStatus == 0);
 
                 }
                 else {

@@ -11,7 +11,7 @@ component displayname=Account output=false extends="Util" {
         this.admin = false;
         this.companies = [];
         this.verified = false;
-        this.verificationCode = createUUID();
+        this.verificationCode = createUUID();        
 
         this.saved = false;
 
@@ -63,6 +63,206 @@ component displayname=Account output=false extends="Util" {
         return this;
     }
 
+    public number function getTokenPool()
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        var t = mumps.get("geodigraph", ["accounts", this.email, "tokenPool"]);
+
+        mumps.close();
+
+        return t;
+    }
+
+    public number function getTokensAllocated()
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        var t = mumps.get("geodigraph", ["accounts", this.email, "tokensAllocated"]);
+
+        mumps.close();
+
+        return t;
+    }
+
+    public number function getTokensFree()
+    {
+        return this.getTokenPool() - this.getTokensAllocated();
+    }
+
+    public void function expandTokenPool(required number tokensRequested)
+    {
+        var auditAction = "expandTokenPool_" & createUUID();
+
+        audit(auditAction, "BEGIN expanding token pool for #this.email# by #arguments.tokensRequested#");
+
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        lock scope="Application" timeout="10" {
+            if(mumps.lock("geodigraph", ["tokensAllocated"], 10)) {
+                var systemTokenPool = mumps.get("geodigraph", ["tokenPool"]);
+                var systemTokensAllocated = mumps.get("geodigraph", ["tokensAllocated"]);
+                var systemTokensAvailable = systemTokenPool - systemTokensAllocated;
+
+                if(arguments.tokensRequested > systemTokensAvailable) {
+                    audit(auditAction, "FAIL expanding token pool for #this.email# by #arguments.tokensRequested#; system token pool exhausted");
+
+                    mumps.unlock("geodigraph", ["tokensAllocated"]);
+                    mumps.close();
+                    throw("System token pool exhausted");
+                }
+
+                systemTokensAllocated += arguments.tokensRequested;
+
+                mumps.set("geodigraph", ["tokensAllocated"], systemTokensAllocated);
+                
+                if(mumps.lock("geodigraph", ["accounts", this.email, "tokenPool"], 10)) {
+                    var userTokens = this.getTokenPool();
+                    userTokens += arguments.tokensRequested;
+                    audit(auditAction, "SUCCESS expanding token pool for #this.email# by #arguments.tokensRequested#");
+
+                    mumps.set("geodigraph", ["accounts", this.email, "tokenPool"], userTokens);
+                }
+                else {
+                    audit(auditAction, "FAIL expanding token pool for #this.email# by #arguments.tokensRequested#; unable to acquire lock on user token pool");
+
+                    mumps.unlock("geodigraph", ["tokenPool"]);
+                    mumps.close();
+                    throw("Unable to acquire lock on user token pool");
+                }
+
+                mumps.unlock("geodigraph", ["accounts", this.email, "tokenPool"]);
+
+            }
+            else {        
+                audit(auditAction, "FAIL expanding token pool for #this.email# by #arguments.tokensRequested#; unable to acquire lock on system token pool");
+                mumps.close();        
+                throw("Unable to acquire lock on system token pool");
+            }
+
+            mumps.unlock("geodigraph", ["tokensAllocated"]);
+        }
+
+        mumps.close();
+    }
+
+    public void function contractTokenPool(required number tokenCount)
+    {
+        var auditAction = "contractTokenPool_" & createUUID();
+        audit(auditAction, "BEGIN contracting token pool for #this.email# by #arguments.tokenCount#");
+
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        lock scope="Application" timeout="10" {
+            
+            // don't allow the token pool to contract below what the user already has allocated
+            var newTokenPoolSize = this.getTokenPool() - arguments.tokenCount;
+
+            if(newTokenPoolSize < this.getTokensAllocated()) {
+                audit(auditAction, "FAIL contracting token pool for #this.email# by #arguments.tokenCount#; new poolSize < tokensAllocated");
+                mumps.close();
+                throw("Reduced user token pool size cannot be less than the number of user tokens currently allocated");
+            }
+
+
+            if(mumps.lock("geodigraph", ["accounts", this.email, "tokenPool"], 10)) {
+                mumps.set("geodigraph", ["accounts", this.email, "tokenPool"], newTokenPoolSize);
+            }
+            else {
+                audit(auditAction, "FAIL contracting token pool for #this.email# by #arguments.tokenCount#; cannot get lock on user token pool");
+                mumps.close();
+                throw("Unable to acquire lock on user token pool.");
+            }
+
+            if(mumps.lock("geodigraph", ["tokensAllocated"], 10)) {
+                var systemTokensAllocated = mumps.get("geodigraph", ["tokensAllocated"]);
+                systemTokensAllocated -= arguments.tokenCount;
+
+                mumps.set("geodigraph", ["tokensAllocated"], systemTokensAllocated);
+            }
+            else {
+                audit(auditAction, "FAIL contracting token pool for #this.email# by #arguments.tokenCount#; cannot get lock on system token pool");
+                mumps.close();
+                throw("Unable to acquire lock on system token pool.")
+            }
+            audit(auditAction, "SUCCESS contracting token pool for #this.email# by #arguments.tokenCount#");
+
+        }
+
+    }
+
+    public void function allocateTokens(required number tokenCount)
+    {
+        var auditAction = "allocateTokens_" & createUUID();
+        audit(auditAction, "BEGIN allocating #arguments.tokenCount# tokens for #this.email#");
+
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        lock scope="Application" timeout="10" {
+            if(this.getTokensFree() < arguments.tokenCount) {
+                audit(auditAction, "FAIL allocating #arguments.tokenCount# tokens for #this.email#; user token pool exhausted");
+                throw("User token pool exhausted");
+            }
+
+            if(mumps.lock("geodigraph", ["accounts", this.email, "tokensAllocated"])) {
+                var tokensAllocated = this.getTokensAllocated();
+
+                tokensAllocated += arguments.tokenCount;
+                mumps.set("geodigraph", ["accounts", this.email, "tokensAllocated"], tokensAllocated);
+                audit(auditAction, "SUCCESS allocating #arguments.tokenCount# tokens for #this.email#");
+            }
+            else {
+                audit(auditAction, "FAIL allocating #arguments.tokenCount# tokens for #this.email#; could not acquire lock on user token pool");
+                mumps.close();
+                throw("Could not acquire lock on user token pool");
+            }
+            mumps.unlock("geodigraph", ["accounts", this.email, "tokensAllocated"]);
+        }
+
+        mumps.close();
+    }
+
+    public void function deallocateTokens(required number tokenCount)
+    {
+        var auditAction = "deallocateTokens_" & createUUID();
+        audit(auditAction, "BEGIN deallocating #arguments.tokenCount# tokens for #this.email#");
+
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        lock scope="Application" timeout="10" {
+
+            if(mumps.lock("geodigraph", ["accounts", this.email, "tokensAllocated"], 10)) {
+                var tokensAllocated = this.getTokensAllocated();
+
+                if(tokensAllocated < tokenCount) {
+                    tokensAllocated = 0;
+                }
+                else {
+                    tokensAllocated -= arguments.tokenCount;
+                }
+
+                mumps.set("geodigraph", ["accounts", this.email, "tokensAllocated"], tokensAllocated);
+            }
+            else {
+                audit(auditAction, "FAIL deallocating #arguments.tokenCount# tokens for #this.email#; could not acquire lock on user token pool");
+                mumps.close();
+                throw("Could not acquire lock on user token pool");
+            }
+            audit(auditAction, "SUCCESS deallocating #arguments.tokenCount# tokens for #this.email#");
+
+            mumps.unlock("geodigraph", ["accounts", this.email, "tokensAllocated"]);
+            
+        }
+
+        mumps.close();
+    }
+
     public Account function save() output=false
     {
         var existingAccounts = new lib.cfmumps.Global("geodigraph", ["accounts"]).defined().defined;
@@ -94,7 +294,9 @@ component displayname=Account output=false extends="Util" {
             admin: this.admin,
             verificationCode: this.verificationCode,
             verified: verified,
-            company: this.email
+            company: this.email,
+            tokenPool: 10,
+            tokensAllocated: 0
         };
 
 
@@ -212,14 +414,11 @@ component displayname=Account output=false extends="Util" {
                 }
 
                 layer.addToAccount(this, true, zIndex, opacity);
-
             }
         }
 
         mumps.close();
     }
-
-   
 
     public struct function layers()
     {        

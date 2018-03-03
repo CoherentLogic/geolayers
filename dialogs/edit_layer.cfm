@@ -37,7 +37,7 @@
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <h3>Please note that deleting a layer <strong>cannot be undone!</strong></h3>
-                                <button type="button" class="btn btn-danger">Delete Layer</button>
+                                <button type="button" class="btn btn-danger" id="btn-delete-layer">Delete Layer</button>
                             </div>
                         </div>
                     </div>                    

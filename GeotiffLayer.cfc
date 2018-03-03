@@ -37,9 +37,31 @@ component displayname="GeotiffLayer" extends="Layer" {
         var mumps = new lib.cfmumps.Mumps();
         mumps.open();
 
-        var status = mumps.get("geodigraph", ["processes", this .extensions.processorId, "statusMessage"]);
+        if(isDefined("this.extensions.processorId")) {
+            if(this.extensions.processorId != "") {
+                var status = mumps.get("geodigraph", ["processes", this.extensions.processorId, "statusMessage"]);
+            }
+            else {
+                var status = "";
+            }
+        }
+        else {
+            var status = "";
+        }
 
         return status;
+    }
+
+    public void function delete()
+    {
+        try {
+            fileDelete(expandPath("/pool/inbound/staging/#this.id#.tif"));
+        }
+        catch (any ex) {
+
+        }
+
+        super.delete();
     }
 
 }

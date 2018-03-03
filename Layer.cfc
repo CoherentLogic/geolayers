@@ -367,6 +367,22 @@ component displayname="Layer" extends="Util" {
         arguments.user.setUiRefresh();
     }
 
+    public void function delete()
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        for(share in this.getShares()) {
+            share.setUiRefresh();
+            this.unshare(share);
+        }
+
+        mumps.kill("geodigraph", ["layers", this.id]);
+        mumps.kill("geodigraph", ["accounts", this.contributor, "layers", this.id]);
+
+        mumps.close();
+    }
+
     public boolean function isDefault()
     {
         var global = new lib.cfmumps.Global("geodigraph", ["defaultLayers", this.id]);

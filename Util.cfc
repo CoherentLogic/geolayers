@@ -29,6 +29,34 @@ component displayname="Util" {
         }
     }
 
+    public void function audit(required string logId, required string message)
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        var horolog = mumps.mumps_function("GETHOROLOG^KBBMCIDT", []);        
+
+        mumps.set("audit", [horolog, arguments.logId, createUUID()], "[#session.account.email#]: #arguments.message#");
+
+        mumps.close();
+    }
+
+    public number function bytesToTokens(required number bytes)
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        var tokenSize = mumps.get("geodigraph", ["tokenSize"]);
+
+        mumps.close();
+
+        if(tokenSize == 0) {
+            throw("System token size cannot be zero.");
+        }
+
+        return int(bytes / tokenSize);
+    }
+
     public component function getLayerObject(required string layerId) {
 
         var mumps = new lib.cfmumps.Mumps();

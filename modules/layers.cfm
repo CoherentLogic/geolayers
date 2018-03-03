@@ -44,7 +44,7 @@
                             </cfcase>
                         </cfswitch>
                     <cfelse>
-                        <cfset icon="fa-spinner">
+                        <cfset icon="fa-spinner fa-spin">
                     </cfif>
                     <cfset opacity = layers[id].properties.opacity & "%">
                     <cfoutput>
