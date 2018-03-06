@@ -18,7 +18,7 @@
                         <th>Last Name</th>
                         <th>Picture</th>
                         <th>Permissions</th>
-                        <th>Tokens (Allocated/Total)</th>
+                        <th>Tokens (Allocated/Overbooked/Total)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@
                                         Standard User
                                     </cfif>
                                 </td>
-                                <td>#user.getTokensAllocated()#/#user.getTokenPool()#</td>
+                                <td>#user.getTokensAllocated()#/#user.getTokensOverbooked()#/#user.getTokenPool()#</td>
                             </tr>
                         </cfoutput>
                     </cfloop>

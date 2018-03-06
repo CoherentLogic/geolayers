@@ -20,8 +20,7 @@
                     <div class="form-group" id="editGeotiffProps" style="display: none;">
                         <label>GeoTIFF Properties</label><br>
                         <span id="originalImage"></span>
-                    </div>
-                    
+                    </div>                   
                     <div class="form-group">
                         <label>Shared with</label><br>
                         <input style="width: 540px !important;" class="tagsinput form-control" id="editShares" type="text" value="" placeholder="Type an e-mail address to share this layer"/><br>
@@ -30,8 +29,7 @@
                         <div id="editLayerAdmin">                            
                             <label><input type="checkbox" id="make-layer-default"> Deploy to all new accounts</label>                     
                         </div>
-                    </div>
-                    
+                    </div>                  
                     <div class="form-group">
                         <label>Delete layer</label>
                         <div class="panel panel-default">

@@ -25,6 +25,8 @@ component displayname="GeotiffLayer" extends="Layer" {
             mumps.open(); 
 
             super.addStringAttribute("processorId", mumps.get("geodigraph", ["layers", arguments.id, "processorId"]));
+            super.addNumericAttribute("tileTokens", 0);
+            super.addNumericAttribute("imageTokens", 0);
             
             mumps.close();
         }
@@ -55,10 +57,23 @@ component displayname="GeotiffLayer" extends="Layer" {
     public void function delete()
     {
         try {
+            var mumps = new lib.cfmumps.Mumps();
+            mumps.open();
+
+            var imageTokens = mumps.get("geodigraph", ["layers", this.id, "imageTokens"]);
+            var tileTokens = mumps.get("geodigraph", ["layers", this.id, "tileTokens"]);
+
+            mumps.close();
+
+            var owner = super.getOwner();
+
+            owner.deallocateTokens(imageTokens + tileTokens);
+
             fileDelete(expandPath("/pool/inbound/staging/#this.id#.tif"));
+            directoryDelete(expandPath("/pool/tiles/#this.id#"), true);
         }
         catch (any ex) {
-
+            writeLog(ex.message);
         }
 
         super.delete();

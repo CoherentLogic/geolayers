@@ -318,6 +318,11 @@ component displayname="Layer" extends="Util" {
         
     }
 
+    public Account function getOwner()
+    {
+        return new Account(this.contributor);
+    }
+
     public array function getShares()
     {
         var mumps = new lib.cfmumps.Mumps();
@@ -376,6 +381,8 @@ component displayname="Layer" extends="Util" {
             share.setUiRefresh();
             this.unshare(share);
         }
+
+        this.getOwner().setUiRefresh();
 
         mumps.kill("geodigraph", ["layers", this.id]);
         mumps.kill("geodigraph", ["accounts", this.contributor, "layers", this.id]);

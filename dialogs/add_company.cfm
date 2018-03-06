@@ -9,17 +9,24 @@
             </div>
             <div class="modal-body">
                 <form target="formTarget" action="dialogs/add_company_submit.cfm" method="post" id="frmAddCompany">
-                    
+                    <div class="alert alert-danger" style="display: none;">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Warning:</span>
+                        <strong>
+                            <span>Deleting a layer CANNOT BE UNDONE!<br><br>Please be absolutely sure that you want to do this.</span>
+                        </strong>
+                    </div>
+
                     <div class="form-group">
-                        <label>Company properties</label>
-                        <input type="text" name="addCompanyName" class="form-control" placeholder="Company name">
+                        <label>Please enter the complete name of the layer to confirm deletion</label>
+                        <input type="text" id="delete-layer-name-confirm" class="form-control" placeholder="Enter the name of the layer here">
                     </div>
 
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="submitFormSilent('frmAddCompany');">Submit</button>
+                <button type="button" class="btn btn-primary" id="delete-layer-btn">Delete Layer</button>
             </div>
         </div>
     </div>

@@ -2,6 +2,9 @@
 <cfscript>
 if(session.loggedIn) {
     admin = false;
+
+    session.account = new Account(session.account.email);
+
     if(session.account.admin == 1) {
         admin = true;
     }
@@ -15,7 +18,8 @@ if(session.loggedIn) {
         admin: admin,
         email: session.account.email,
         picture: session.account.picture,
-        zip: session.account.zip
+        zip: session.account.zip,
+        uploadsEnabled: session.account.uploadsEnabled
     };
 }
 else {

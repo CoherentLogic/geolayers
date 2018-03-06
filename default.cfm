@@ -38,12 +38,12 @@
 
     <cfinclude template="dialogs/add_geotiff_layer.cfm">
     <cfinclude template="dialogs/add_base_layer.cfm">
-    <cfinclude template="dialogs/add_user.cfm">
-    <cfinclude template="dialogs/add_company.cfm">
+    <cfinclude template="dialogs/add_user.cfm">    
     <cfinclude template="dialogs/debug.cfm">
     <cfinclude template="dialogs/layer_controls.cfm">
     <cfinclude template="dialogs/edit_layer.cfm">
     <cfinclude template="dialogs/edit_profile.cfm">
+    <cfinclude template="dialogs/confirm_delete_layer.cfm">
 
     <cfif not session.loggedIn>
         <cfif isDefined("url.showLayer")>
@@ -153,7 +153,7 @@
 
                 <div class="footer" id="footer">
                     <div class="pull-right">
-                        Storage Used: <strong><span id="disk-usage-pct" style="margin-right: 10px;"></span></strong> CPU Load: <strong><span id="cpu-load"></span></strong>
+                        Tokens (Used/Total): <strong><span id="tokens-used"></span>/<span id="tokens-total"></span></strong>
                     </div>
                     <div>
                         <strong>Copyright</strong> &copy; 2018 Coherent Logic Development LLC

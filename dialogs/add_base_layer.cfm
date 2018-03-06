@@ -25,7 +25,7 @@
                         <input type="text" name="baseLayerUrl" class="form-control" placeholder="URL">                        
                     </div>
                     <div class="form-group">
-                        <label>Zoom range</label>
+                        <label>Zoom range (<span id="base-zoom-min">?</span>-<span id="base-zoom-max">?</span>)</label>
                         <div id="base_zoom_range"></div>
                     </div>
                 </form>

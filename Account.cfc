@@ -12,6 +12,8 @@ component displayname=Account output=false extends="Util" {
         this.companies = [];
         this.verified = false;
         this.verificationCode = createUUID();        
+        this.uploadsEnabled = true;
+        this.tokensOverbooked = 0;
 
         this.saved = false;
 
@@ -39,9 +41,24 @@ component displayname=Account output=false extends="Util" {
         this.company = a.company;
         //this.companies = a.companies;
         this.passwordHash = a.passwordHash;
-        this.picture = a.picture;
+
+        if(a.picture != "") {
+            this.picture = a.picture;
+        }
+        else {
+            this.picture = "/img/placeholder.png";
+        }
+        
         this.zip = a.zip;
         this.verificationCode = a.verificationCode;
+        this.tokensOverbooked = a.tokensOverbooked;
+
+        if(a.uploadsEnabled == 0) {
+            this.uploadsEnabled = false;
+        } 
+        else {
+            this.uploadsEnabled = true;
+        }
 
         if(a.verified == 1) {
             this.verified = true;
@@ -63,7 +80,7 @@ component displayname=Account output=false extends="Util" {
         return this;
     }
 
-    public number function getTokenPool()
+    public numeric function getTokenPool()
     {
         var mumps = new lib.cfmumps.Mumps();
         mumps.open();
@@ -75,7 +92,7 @@ component displayname=Account output=false extends="Util" {
         return t;
     }
 
-    public number function getTokensAllocated()
+    public numeric function getTokensAllocated()
     {
         var mumps = new lib.cfmumps.Mumps();
         mumps.open();
@@ -87,7 +104,19 @@ component displayname=Account output=false extends="Util" {
         return t;
     }
 
-    public number function getTokensFree()
+    public numeric function getTokensOverbooked()
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        var t = mumps.get("geodigraph", ["accounts", this.email, "tokensOverbooked"]);
+
+        mumps.close();
+
+        return t;       
+    }
+
+    public numeric function getTokensFree()
     {
         return this.getTokenPool() - this.getTokensAllocated();
     }
@@ -106,6 +135,7 @@ component displayname=Account output=false extends="Util" {
                 var systemTokenPool = mumps.get("geodigraph", ["tokenPool"]);
                 var systemTokensAllocated = mumps.get("geodigraph", ["tokensAllocated"]);
                 var systemTokensAvailable = systemTokenPool - systemTokensAllocated;
+                var userTokensOverbooked = this.getTokensOverbooked();
 
                 if(arguments.tokensRequested > systemTokensAvailable) {
                     audit(auditAction, "FAIL expanding token pool for #this.email# by #arguments.tokensRequested#; system token pool exhausted");
@@ -122,6 +152,22 @@ component displayname=Account output=false extends="Util" {
                 if(mumps.lock("geodigraph", ["accounts", this.email, "tokenPool"], 10)) {
                     var userTokens = this.getTokenPool();
                     userTokens += arguments.tokensRequested;
+                    
+
+                    if(userTokensOverbooked > 0) {
+                        userTokensOverbooked -= arguments.tokensRequested;
+                    
+                        if(userTokensOverbooked < 0) {
+                            userTokensOverbooked = 0;
+                        }
+
+                        mumps.set("geodigraph", ["accounts", this.email, "tokensOverbooked"], userTokensOverbooked);
+                    }
+
+                    if(userTokensOverbooked == 0) {
+                        mumps.set("geodigraph", ["accounts", this.email, "uploadsEnabled"], 1);
+                    }
+
                     audit(auditAction, "SUCCESS expanding token pool for #this.email# by #arguments.tokensRequested#");
 
                     mumps.set("geodigraph", ["accounts", this.email, "tokenPool"], userTokens);
@@ -227,6 +273,20 @@ component displayname=Account output=false extends="Util" {
         mumps.close();
     }
 
+    public void function overbook(required number tokenCount)
+    {
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        lock scope="Application" timeout="10" {
+            var currentOverbook = mumps.get("geodigraph", ["accounts", this.email, "tokensOverbooked"]);
+            mumps.set("geodigraph", ["accounts", this.email, "tokensOverbooked"], currentOverbook + arguments.tokenCount);
+            mumps.set("geodigraph", ["accounts", this.email, "uploadsEnabled"], 0); 
+        }
+
+        mumps.close();
+    }
+
     public void function deallocateTokens(required number tokenCount)
     {
         var auditAction = "deallocateTokens_" & createUUID();
@@ -285,6 +345,12 @@ component displayname=Account output=false extends="Util" {
             verified = 1;
         }
 
+        var uploadsEnabled = 0;
+        if(this.uploadsEnabled == true)
+        {
+            uploadsEnabled = 1;
+        }
+
         accountStruct = {
             firstName: this.firstName,
             lastName: this.lastName,          
@@ -295,12 +361,16 @@ component displayname=Account output=false extends="Util" {
             verificationCode: this.verificationCode,
             verified: verified,
             company: this.email,
-            tokenPool: 10,
-            tokensAllocated: 0
+            tokenPool: 0,
+            tokensAllocated: 0,
+            tokensOverbooked: this.tokensOverbooked,
+            uploadsEnabled: uploadsEnabled
         };
 
 
         glob.setObject(accountStruct);
+
+        this.expandTokenPool(10);
 
         module template="/modules/send_email.cfm" caption="Please verify your e-mail address" message="Please click on the link to verify your e-mail address." link="https://maps.geodigraph.com/verify.cfm?email=#this.email#&code=#this.verificationCode#" recipient=this.email;
 

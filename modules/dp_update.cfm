@@ -41,6 +41,30 @@ mumps.set("geodigraph", ["processes", url.distributedProcessId, "statusMessage"]
 
 layer = util.getLayerObject(process.layerId);
 
+if(newStatus == "DP_COMPLETE" && layer.renderer == "geotiff") {
+
+ 
+    layerOwner = new Account(layer.contributor);
+
+    dirSize = util.dirSize(expandPath("/pool/tiles/#layer.id#")) * 1024;
+
+    tokensNeeded = util.bytesToTokens(dirSize);
+    mumps.set("geodigraph", ["layers", layer.id, "tileTokens"], tokensNeeded);
+
+    tokensAvailable = layerOwner.getTokensFree(); 
+
+    if(tokensNeeded > tokensAvailable) {
+        overbook = tokensNeeded - tokensAvailable;
+
+        layerOwner.allocateTokens(tokensAvailable);
+        layerOwner.overbook(overbook);
+    }
+    else {
+        layerOwner.allocateTokens(tokensNeeded);
+    }
+
+}
+
 var notification = new Notification({
     caption: statSum,
     message: "Layer #layer.name# #statStr#",
@@ -54,5 +78,6 @@ for(user in layer.getNotifyTargets()) {
 }
 
 mumps.close();
+
 
 </cfscript>

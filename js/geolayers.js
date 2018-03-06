@@ -98,21 +98,38 @@ geodigraph = {
     // initialization
     init: function() {
 
+        tokenWarningShown = false;
+
         initializeGis({
             baseUrl: geodigraph.baseUrl
         });
 
         geodigraph.updateLayers();
 
-        var diskSpacePoller = new Poller("monitor disk space", function() {
+        var tokensPoller = new Poller("monitor user tokens", function() {
 
-            $.get(geodigraph.baseUrl + "/modules/disk_space.cfm", function(data) {
+            $.get(geodigraph.baseUrl + "/modules/user_tokens.cfm", function(data) {
 
-                $("#disk-usage-pct").html(data.percentageUsed);
+               var tokensAllocated = parseInt(data.tokensAllocated);
+               var tokensOverbooked = parseInt(data.tokensOverbooked);
+               var tokensTotal = parseInt(data.tokensTotal);
 
-                var cpuLoad = parseInt((data.load * 100) / data.cpuCount);
+               var totalUsed = tokensAllocated + tokensOverbooked;
 
-                $("#cpu-load").html(cpuLoad + "%");
+               if(totalUsed > tokensTotal) {
+                if(!tokenWarningShown) {
+                    toastr.warning('You are using more tokens than you have purchased! Please purchase at least ' + tokensOverbooked + ' tokens in order to upload.','Uploads Blocked');
+                    tokenWarningShown = true;
+                }
+                $("#tokens-used").css("color", "red");
+               }
+               else {
+                tokenWarningShown = false;
+                $("#tokens-used").css("color", "");
+               }
+
+               $("#tokens-used").html(totalUsed);
+               $("#tokens-total").html(tokensTotal);
 
             });
 
@@ -133,6 +150,8 @@ geodigraph = {
         });
 
         range_slider.noUiSlider.on('update', function (values, handle, unencoded, tap, positions) {
+            $("#geotiff-zoom-min").html(parseInt(values[0]));
+            $("#geotiff-zoom-max").html(parseInt(values[1]));
             $("#geoTiffMinZoom").val(parseInt(values[0]));
             $("#geoTiffMaxZoom").val(parseInt(values[1]));
         });
@@ -152,6 +171,8 @@ geodigraph = {
         });
 
         range_slider.noUiSlider.on('update', function (values, handle, unencoded, tap, positions) {
+            $("#base-zoom-min").html(parseInt(values[0]));
+            $("#base-zoom-max").html(parseInt(values[1]));
             $("#baseLayerMinZoom").val(parseInt(values[0]));
             $("#baseLayerMaxZoom").val(parseInt(values[1]));            
         });
@@ -207,11 +228,17 @@ geodigraph = {
         });
 
         var sessionPoller = new Poller("retrieve session data", function() {
-            $.get("/modules/get_login_session.cfm", function(data) {
+            $.get("/modules/get_login_session.cfm", function(data) {                
+
                 if(data.success) {
                     geodigraph.session = data;
 
-                    $("#sb-user-name").html(geodigraph.session.name);
+                    if(geodigraph.session.admin) {
+                        $("#sb-user-name").html(geodigraph.session.name + " (Administrator)");
+                    }
+                    else {
+                        $("#sb-user-name").html(geodigraph.session.name);
+                    }
                     $("#sb-user-picture").attr("src", geodigraph.session.picture);
                 }
                 else {
@@ -220,7 +247,7 @@ geodigraph = {
             });  
         });
 
-        installPoller(diskSpacePoller);
+        installPoller(tokensPoller);
         installPoller(notificationsPoller);
         installPoller(notificationDeliveryPoller);
         installPoller(layerRefreshPoller);
@@ -435,15 +462,45 @@ function addGeoTiffLayer()
     $("#dlgAddGeoTIFF").modal();
 }
 
+function beginDeleteLayer(id)
+{
+    $("#delete-layer-name-confirm").val("");
+    $("#delete-layer-error").html("");
+    $("#delete-layer-id").val(id);
+    let layerName = $("#editLayerName").val();
+
+    $("#delete-layer-name").val(layerName);
+    $("#delete-layer-display").html(layerName);
+
+    $("#btn-delete-layer-confirm").on('click', function(event) {
+
+        let confirmedValue = $("#delete-layer-name-confirm").val();
+
+        if(confirmedValue == layerName) {
+            deleteLayer(id);
+        }
+        else {
+            $("#delete-layer-error").html("Layer names do not match.");
+        }
+
+    });
+
+    $("#dlgConfirmDeleteLayer").modal();
+}
+
 function deleteLayer(id)
 {
+
+    console.log("Deleting layer " + id);
+
     var url = "/modules/delete_layer.cfm?id=" + id;
     $.get(url, function(data) {
         if(data.success) {            
-            $("#dlgEditLayer").modal('hide');            
+            $("#dlgEditLayer").modal('hide');     
+            $("#dlgConfirmDeleteLayer").modal('hide');       
         }
         else {
-            alert(data.message);
+            $("#delete-layer-error").html(data.message);
         }
     });
 }
@@ -582,7 +639,7 @@ function editProfile()
 function editLayer(id)
 {
     $("#btn-delete-layer").on('click', function(e) {
-        deleteLayer(id);
+        beginDeleteLayer(id);
     });
 
     if(geodigraph.session.admin) {

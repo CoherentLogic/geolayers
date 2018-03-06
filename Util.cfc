@@ -36,7 +36,12 @@ component displayname="Util" {
 
         var horolog = mumps.mumps_function("GETHOROLOG^KBBMCIDT", []);        
 
-        mumps.set("audit", [horolog, arguments.logId, createUUID()], "[#session.account.email#]: #arguments.message#");
+        if(isDefined("session.account.email")) {
+            mumps.set("audit", [horolog, arguments.logId, createUUID()], "[#session.account.email#]: #arguments.message#");
+        }
+        else {
+            mumps.set("audit", [horolog, arguments.logId, createUUID()], "[DP]: #arguments.message#");
+        }
 
         mumps.close();
     }
@@ -54,10 +59,17 @@ component displayname="Util" {
             throw("System token size cannot be zero.");
         }
 
-        return int(bytes / tokenSize);
+        var tokens = int(bytes / tokenSize);
+
+        // users must be charged for at least 1 token for every upload
+        // to eliminate abuse by uploading lots of layers < tokenSize.
+        if(!tokens) tokens = 1;
+
+        return tokens;
     }
 
-    public component function getLayerObject(required string layerId) {
+    public component function getLayerObject(required string layerId) 
+    {
 
         var mumps = new lib.cfmumps.Mumps();
         mumps.open();
@@ -77,4 +89,14 @@ component displayname="Util" {
         }
 
     }
+
+    public number function dirSize(required string path) 
+    {
+        var script = expandPath("/bin/dir_size.sh");
+
+        cfexecute(name="#script#" arguments="#arguments.path#" variable="scriptOutput" timeout="999999");
+
+        return scriptOutput;
+    }
+    
 }

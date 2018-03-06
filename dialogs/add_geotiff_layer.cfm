@@ -22,7 +22,7 @@
                             </div>                     
                         </div>
                         <div class="form-group">
-                            <label>Zoom range</label>
+                            <label>Zoom range (<span id="geotiff-zoom-min">?</span>-<span id="geotiff-zoom-max">?</span>)</label>
                             <div id="geotiff_zoom_range"></div>
                         </div>
                         <div class="form-group">

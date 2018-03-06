@@ -14,7 +14,7 @@ else {
     layer.delete();
 
     o = {
-        succes: true,
+        success: true,
         message: "Layer deleted."
     };
 }

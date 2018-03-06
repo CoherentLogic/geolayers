@@ -1,6 +1,6 @@
 <cfheader name="Content-Type" value="application/json">
 <cfscript>
-u = new Util();
+    u = new Util();
 
     try {
         
@@ -28,12 +28,14 @@ u = new Util();
 
                 mumps = new lib.cfmumps.Mumps();
                 mumps.open();
-                mumps.set("geodigraph", ["layers", layer.id, "tokens"], tokensNeeded);
+                mumps.set("geodigraph", ["layers", layer.id, "imageTokens"], tokensNeeded);
+                mumps.set("geodigraph", ["layers", layer.id, "tileTokens"], 0);
+                mumps.close();
             }
             catch (any ex) {
                 layer.delete();
-                fileDelete(filename);
                 session.account.setUiRefresh();
+                fileDelete(filename);                
                 throw("Could not allocate tokens: " & ex.message);
             }
         }
