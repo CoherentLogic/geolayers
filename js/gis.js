@@ -60,9 +60,22 @@ function initializeLayers(m) {
                         l.tms = false;                    
                         break;
                     case 'geotiff':
-                        console.log(m.opts.baseUrl);
+                        console.log(m.opts.baseUrl);                        
                         l.url = 'https://maps.geodigraph.com' + m.opts.baseUrl + '/pool/tiles/' + id + '/{z}/{x}/{y}.png';
                         l.tms = true;
+
+                        let minx = layers[id].layer.minx;
+                        let maxx = layers[id].layer.maxx;
+                        let miny = layers[id].layer.miny;
+                        let maxy = layers[id].layer.maxy;
+
+                        let min = L.latLng(miny, minx);
+                        let max = L.latLng(maxy, maxx);
+
+                        l.bounds = L.latLngBounds(min, max);
+
+                        var bounds = l.bounds;
+
                         break;                    
                 }
 
@@ -77,6 +90,7 @@ function initializeLayers(m) {
                 l.errorTileUrl = "https://geolayers.geodigraph.com/img/no_tile.png";
 
                 m.layers[id] = {
+                    bounds: bounds,
                     opacity: opacity,
                     prevOpacity: opacity,
                     leafletLayer: L.tileLayer(l.url, l)
@@ -147,28 +161,7 @@ GlMap.prototype.showLayer = function(layerId) {
     this.setLayerOpacity(layerId, this.layers[layerId].prevOpacity);
 };
 
-GlMap.prototype.centerToLayer = function(layerId) {
-    var self = this;
-
-    $.get("/pool/tiles/" + layerId + "/tilemapresource.xml", function(data) {
-        xml = $(data);
-        bbox = xml.find("BoundingBox");
-
-        minx = bbox.attr('minx');
-        miny = bbox.attr('miny');
-        maxx = bbox.attr('maxx');
-        maxy = bbox.attr('maxy');
-
-        min = L.latLng(miny, minx);
-        max = L.latLng(maxy, maxx);
-
-        bounds = L.latLngBounds(min, max);
-        centroid = bounds.getCenter();
-
-        self.leafletMap.flyTo(centroid);
-
-    });
-};
+GlMap.prototype.centerToLayer = (layerId) => window.map.leafletMap.flyTo(window.map.layers[layerId].bounds.getCenter());
 
 GlMap.prototype.increaseLayerOpacity = function (layerId) {    
     var opacity = this.layers[layerId].opacity;

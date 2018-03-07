@@ -8,38 +8,59 @@
                 <small class="font-bold">Edit the properties of a layer.</small>
             </div>
             <div class="modal-body">
-                <form target="formTarget" action="dialogs/edit_layer_submit.cfm" method="post" id="frmEditLayer" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label>Properties</label>
-                        <input type="text" name="editLayerId" id="editLayerId" value="" style="display:none;">
-                        <input type="text" name="editLayerName" id="editLayerName" class="form-control layer-edit-control" placeholder="Layer name"><br>
-                        <input type="text" name="editAttribution" id="editAttribution" class="form-control layer-edit-control" placeholder="Attribution"><br> 
-                        <input type="text" name="editCopyright" id="editCopyright" class="form-control layer-edit-control" placeholder="Copyright"><br> 
-                        <span id="layerEditError" style="color: red;"></span>
-                    </div>
-                    <div class="form-group" id="editGeotiffProps" style="display: none;">
-                        <label>GeoTIFF Properties</label><br>
-                        <span id="originalImage"></span>
-                    </div>                   
-                    <div class="form-group">
-                        <label>Shared with</label><br>
-                        <input style="width: 540px !important;" class="tagsinput form-control" id="editShares" type="text" value="" placeholder="Type an e-mail address to share this layer"/><br>
-                        <span id="layerShareError" style="color: red;"></span>
-                        <br>
-                        <div id="editLayerAdmin">                            
-                            <label><input type="checkbox" id="make-layer-default"> Deploy to all new accounts</label>                     
-                        </div>
-                    </div>                  
-                    <div class="form-group">
-                        <label>Delete layer</label>
-                        <div class="panel panel-default">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">                        
+                        <li class="active"><a data-toggle="tab" href="#el-basic">Layer Info</a></li>    
+                        <li><a data-toggle="tab" href="#el-sharing">Sharing</a></li>                                            
+                        <li><a data-toggle="tab" href="#el-delete">Delete Layer</a></li>                            
+                    </ul>
+                    <div class="tab-content">                            
+
+                        <div id="el-basic" class="tab-pane active">
                             <div class="panel-body">
-                                <h3>Please note that deleting a layer <strong>cannot be undone!</strong></h3>
-                                <button type="button" class="btn btn-danger" id="btn-delete-layer">Delete Layer</button>
-                            </div>
+                                <div class="form-group">
+                                    <label>Properties</label>
+                                    <input type="text" name="editLayerId" id="editLayerId" value="" style="display:none;">
+                                    <input type="text" name="editLayerName" id="editLayerName" class="form-control layer-edit-control" placeholder="Layer name"><br>
+                                    <input type="text" name="editAttribution" id="editAttribution" class="form-control layer-edit-control" placeholder="Attribution"><br> 
+                                    <input type="text" name="editCopyright" id="editCopyright" class="form-control layer-edit-control" placeholder="Copyright"><br> 
+                                    <span id="layerEditError" style="color: red;"></span>
+                                </div>
+                                <div class="form-group" id="editGeotiffProps" style="display: none;">
+                                    <label>GeoTIFF Properties</label><br>
+                                    <span id="originalImage"></span>
+                                </div>    
+                            </div>    
                         </div>
-                    </div>                    
-                </form>
+                        <div id="el-sharing" class="tab-pane">  
+                            <div class="panel-body">         
+                                <div class="form-group">
+                                    <label>Shared with</label><br>
+                                    <input style="width: 540px !important;" class="tagsinput form-control" id="editShares" type="text" value="" placeholder="Type an e-mail address to share this layer"/><br>
+                                    <span id="layerShareError" style="color: red;"></span>
+                                    <br>
+                                    <div id="editLayerAdmin">                            
+                                        <label><input type="checkbox" id="make-layer-default"> Deploy to all new accounts</label>                     
+                                    </div>
+                                </div>   
+                            </div> 
+                        </div>
+                        <div id="el-delete" class="tab-pane">
+                            <div class="panel-body">              
+                                <div class="form-group">
+                                    <label>Delete layer</label>
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <h3>Please note that deleting a layer <strong>cannot be undone!</strong></h3>
+                                            <button type="button" class="btn btn-danger" id="btn-delete-layer">Delete Layer</button>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>       
+                        </div>
+                    </div>
+                </div>            
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>                

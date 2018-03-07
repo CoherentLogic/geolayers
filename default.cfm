@@ -34,7 +34,7 @@
 
 </head>
 
-<body>
+<body ng-app="">
 
     <cfinclude template="dialogs/add_geotiff_layer.cfm">
     <cfinclude template="dialogs/add_base_layer.cfm">
@@ -221,6 +221,10 @@
 <!--- <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script> --->
 <script src="js/leaflet-measure.js"></script>
+
+<!-- Angular -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
 <!-- Geodigraph stuff -->
 <script src="js/filehandler.js"></script>
 <script src="js/gis.js"></script>

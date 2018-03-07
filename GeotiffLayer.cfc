@@ -25,10 +25,22 @@ component displayname="GeotiffLayer" extends="Layer" {
             mumps.open(); 
 
             super.addStringAttribute("processorId", mumps.get("geodigraph", ["layers", arguments.id, "processorId"]));
+
+            mumps.close();
+            
             super.addNumericAttribute("tileTokens", 0);
             super.addNumericAttribute("imageTokens", 0);
+
+            var xmlDoc = xmlParse(fileRead("/pool/tiles/#arguments.id#/tilemapresource.xml"));
+            var bbox = xmlDoc.TileMap.BoundingBox.XmlAttributes;
+
+            super.addStringAttribute("maxx", bbox.maxx);
+            super.addStringAttribute("maxy", bbox.maxy);
+            super.addStringAttribute("minx", bbox.minx);
+            super.addStringAttribute("miny", bbox.miny);
+
+
             
-            mumps.close();
         }
 
         return this;

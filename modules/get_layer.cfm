@@ -27,5 +27,4 @@ else {
 }
 
 writeOutput(serializeJSON(o));
-
 </cfscript>

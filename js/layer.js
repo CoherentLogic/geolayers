@@ -1,0 +1,8 @@
+class Layer {
+
+    constructor(id) {
+
+    }
+
+    
+}
