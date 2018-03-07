@@ -23,7 +23,7 @@ do
 		shift 2
 		;;
 	-f|--file)
-	    FILE=$2
+	    FILE=$2	  
 	    shift 2
 	    ;;
 	-e|--email)
@@ -41,6 +41,10 @@ BASEPATH=/home/geodigraph/webapps/maps/pool/tiles/${ID}
 mkdir -p ${BASEPATH}
 
 
-/usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH} > /tmp/maketiles.${ID}
 
-exit $?
+/usr/bin/gdal2tiles.py -z ${MINZOOM}-${MAXZOOM} -w none ${FILE} ${BASEPATH} > /tmp/maketiles.${ID}
+RET=$?
+
+convert ${FILE}[0] -resize 220x220 /home/geodigraph/webapps/maps/pool/thumbnails/${ID}.jpg > /tmp/convert.${ID}
+
+exit ${RET}

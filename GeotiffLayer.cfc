@@ -28,8 +28,15 @@ component displayname="GeotiffLayer" extends="Layer" {
 
             mumps.close();
             
-            super.addNumericAttribute("tileTokens", 0);
-            super.addNumericAttribute("imageTokens", 0);
+            var tileTokens = mumps.get("geodigraph", ["layers", arguments.id, "tileTokens"]);
+            var imageTokens = mumps.get("geodigraph", ["layers", arguments.id, "imageTokens"]);
+
+
+            if(tileTokens == "") tileTokens = 0;
+            if(imageTokens == "") imageTokens = 0;
+
+            super.addNumericAttribute("tileTokens", tileTokens);
+            super.addNumericAttribute("imageTokens", imageTokens);
 
             var xmlDoc = xmlParse(fileRead("/pool/tiles/#arguments.id#/tilemapresource.xml"));
             var bbox = xmlDoc.TileMap.BoundingBox.XmlAttributes;
@@ -38,8 +45,6 @@ component displayname="GeotiffLayer" extends="Layer" {
             super.addStringAttribute("maxy", bbox.maxy);
             super.addStringAttribute("minx", bbox.minx);
             super.addStringAttribute("miny", bbox.miny);
-
-
             
         }
 

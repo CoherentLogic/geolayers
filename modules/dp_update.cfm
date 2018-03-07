@@ -79,5 +79,8 @@ for(user in layer.getNotifyTargets()) {
 
 mumps.close();
 
+if(newStatus == "DP_FAILED") {
+    layer.delete();
+}
 
 </cfscript>

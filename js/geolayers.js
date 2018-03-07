@@ -92,6 +92,13 @@ geodigraph = {
                 editLayer(layerId);
             });
 
+            $(".view-layer").click(function() {
+                var row = $(this).parents("tr:first");
+                var layerId = row.attr('id').split("_")[1];               
+
+                viewLayer(layerId);
+            })
+
         }); // end of handler for $.get()
     },
 
@@ -634,6 +641,83 @@ function editProfile()
 
 
     $("#dlgEditProfile").modal();
+}
+
+function viewLayer(id)
+{
+    let layer = new Layer(id);
+
+    let onSuccess = function(data) {
+
+        let layerType = "";
+
+        switch(data.renderer) {
+            case 'geotiff':
+                layerType = '<i class="fa fa-picture-o"></i> GeoTIFF Imagery';
+
+                $("#vl-tab-basic").show();
+                $("#vl-tab-geography").show();
+                $("#vl-tab-sharing").show();
+                $("#vl-tab-storage").show();
+
+                break;
+            case 'base':
+                layerType = '<i class="fa fa-map"></i> Basemap Tiles';
+
+                $("#vl-tab-basic").show();
+                $("#vl-tab-geography").hide();
+                $("#vl-tab-sharing").show();
+                $("#vl-tab-storage").hide();
+                
+                break;
+        }
+
+        let zoomRange = "";
+        if(data.minZoom === data.maxZoom) {
+            zoomRange = data.minZoom + " Only";
+        }
+        else {
+            zoomRange = data.minZoom + "-" + data.maxZoom;
+        }
+
+        $("#vl-layer-name").html(data.name);
+        $("#vl-layer-type").html(layerType);
+        $("#vl-layer-timestamp").html(data.created);
+        $("#vl-layer-zoomrange").html(zoomRange);
+        $("#vl-layer-attribution").html(data.attribution);
+        $("#vl-layer-copyright").html(data.copyright || "None");
+
+        let min = L.latLng(data.miny, data.minx);
+        let max = L.latLng(data.maxy, data.maxx);
+        let bounds = L.latLngBounds(min, max);
+        let centroid = bounds.getCenter();
+
+
+        $("#vl-layer-nw").html(data.minx + ", " + data.miny);
+        $("#vl-layer-se").html(data.maxx + ", " + data.maxy);        
+        $("#vl-layer-centroid").html(centroid.lng + ", " + centroid.lat);
+
+        $("#vl-tile-thumbnail").attr("src", "/pool/thumbnails/" + id + ".jpg");
+
+        let contributor = new Account(data.contributor);
+
+        contributor.get().then(function(account) {
+            $("#vl-contributor-picture").attr("src", account.picture || "/img/placeholder.png");
+            $("#vl-contributor-name").html(account.name);
+        },
+        function(error) {
+            $("#vl-contributor-picture").attr("src", "/img/placeholder.png");
+            $("#vl-contributor-name").html("Unknown");
+        });
+
+        $("#dlgViewLayer").modal();
+    };
+
+    let onError = function(error) {
+        console.log(error);
+    };
+
+    layer.get().then(onSuccess, onError);
 }
 
 function editLayer(id)

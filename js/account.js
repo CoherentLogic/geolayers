@@ -1,8 +1,8 @@
-class Layer {
+class Account {
 
-    constructor(id) 
+    constructor(email) 
     {
-        this.id = id;
+        this.email = email;
 
         return this;
     }
@@ -12,12 +12,12 @@ class Layer {
         let self = this;
 
         let promise = new Promise(function(resolve, reject) {
-            let url = "/api/layer/" + self.id;
+            let url = "/api/account/" + self.email;
             
             $.get(url, function(data) {
                 if(data.success) {
-                    self.layer = data.layer;
-                    resolve(data.layer);
+                    self.account = data.account;
+                    resolve(data.account);
                 }
                 else {
                     reject(data.message);

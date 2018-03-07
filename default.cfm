@@ -44,6 +44,7 @@
     <cfinclude template="dialogs/edit_layer.cfm">
     <cfinclude template="dialogs/edit_profile.cfm">
     <cfinclude template="dialogs/confirm_delete_layer.cfm">
+    <cfinclude template="dialogs/view_layer_properties.cfm">
 
     <cfif not session.loggedIn>
         <cfif isDefined("url.showLayer")>
@@ -226,6 +227,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 
 <!-- Geodigraph stuff -->
+<script src="js/layer.js"></script>
+<script src="js/account.js"></script>
 <script src="js/filehandler.js"></script>
 <script src="js/gis.js"></script>
 <script src="js/geolayers.js"></script>

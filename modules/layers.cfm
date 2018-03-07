@@ -83,8 +83,9 @@
                                 </td>   
                                 <td>
                                     <cfif layers[id].layer.contributor EQ session.account.email>
-                                        <a  href="##" class="edit-layer"><i class="fa fa-edit"></i></a>
-                                    </cfif>                                   
+                                        <a  href="##" class="edit-layer"><i class="fa fa-edit"></i></a>&nbsp;
+                                    </cfif>  
+                                    <a href="##" class="view-layer"><i class="fa fa-info-circle"></i></a>                                 
                                 </td>                                                        
                             </cfif>
                         </tr>

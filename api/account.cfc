@@ -1,6 +1,6 @@
 component extends="Util" {
 
-    remote struct function layer(required string id) returnformat="JSON"
+    remote struct function account(required string email) returnformat="JSON"
     {
         if(!session.loggedIn) {
             return {
@@ -13,7 +13,7 @@ component extends="Util" {
 
         switch(method) {
             case "GET":
-                return this.get(arguments.id);
+                return this.get(arguments.email);
                 break;
             case "POST":
                 return {
@@ -35,47 +35,43 @@ component extends="Util" {
         };
     } 
 
-    private struct function get(required string id)
+    private struct function get(required string email)
     {
-        var mumps = new lib.cfmumps.Mumps();
-        mumps.open();
+        var glob = new lib.cfmumps.Global("geodigraph", ["accounts", arguments.email]);
 
-        if(mumps.data("geodigraph", ["layers", arguments.id]).defined) {    
-
-            mumps.close();
+        if(glob.defined().defined) {    
 
             try {
-                var layerObj = this.getLayerObject(arguments.id);
-                var layer = layerObj.toStruct();
-                var shares = layerObj.getShares();
-                var sharedEmails = [];
-
-                for(share in shares) {
-                    sharedEmails.append(share.email);
-                }
-
-                layer.created = lcase(friendlyDate(layer.timestamp));
+                var a = glob.getObject();
+           
+                glob.close();
 
                 return {
                     success: true,
                     message: "",
-                    layer: layer,
-                    shares: sharedEmails
+                    account: {
+                        email: arguments.email,
+                        picture: a.picture,
+                        name: "#a.firstName# #a.lastName#",                    
+                    }
                 };
             }
             catch (any ex) {
+                glob.close();
 
                 return {
                     success: false,
-                    message: ex.message
+                    message: ex.message,
+                    email: arguments.email
                 };
             }
             
         }
         else {
+            glob.close();
             return {
                 success: false,
-                message: "Invalid layer ID #arguments.id#"
+                message: "Invalid account #arguments.email#"
             };
         }
         
