@@ -759,7 +759,7 @@ function viewLayer(id)
             $("#vl-layer-default").html("No");
         }
 
-        $("#vl-shares-container").html('<h3>Shared With</h3><ul id="vl-shares"></ul>');
+        $("#vl-shares-container").html('<h3>Shared With</h3><table class="table" id="vl-shares"></table>');
 
         for(index in data.shares) {
             share = data.shares[index];
@@ -767,10 +767,10 @@ function viewLayer(id)
             let account = new Account(share);
             account.get().then(function(account) {
                 if(account.name !== " ") {
-                    $("#vl-shares").append("<li>" + account.name + "</li>");
+                    $("#vl-shares").append("<tr><td>" + account.name + "</td></tr>");
                 }
                 else {
-                    $("#vl-shares").append("<li>" + account.email + "</li>");
+                    $("#vl-shares").append("<tr><td>" + account.email + "</td></tr>");
                 }
             },
             function(error) {

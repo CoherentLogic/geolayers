@@ -19,6 +19,8 @@
     <cfif IsDefined("form.submit")>        
         <cfscript>
             var glob = new lib.cfmumps.Global("geodigraph", ["accounts", form.email]);
+            var curInfo = glob.getObject();
+
             o = {};
 
             if(isDefined("form.password")) {
@@ -35,77 +37,40 @@
 
             if(isDefined("form.zip")) {
                 o.zip = form.zip;
+            }            
+
+            if(form.verifyCode == curInfo.verificationCode) {
+                o.verified = 1;                
             }
 
             glob.setObject(o);
-
         </cfscript>        
 
-        <cflocation url="login.cfm">
-    <cfelse>
+        <cflocation url="login.cfm" addtoken="no">
+    <cfelse> <!--- not submitting --->
         <cfscript>
-        account = new Account(url.email);
+            account = new Account(url.email);
 
-        if(account.verificationCode == url.code) {
-        
-            needMoreInfo = false;
-
-            if(account.firstName == "") {
-                needMoreInfo = true;
-            }
-
-            if(account.lastName == "") {
-                needMoreInfo = true;
-            }
-
-            if(account.passwordHash == "") {
-                needMoreInfo = true;
-            }
-
-            if(account.zip == "") {
-                needMoreInfo = true;
-            }
-
-            o = {
-                verificationCode: "",
-                verified: 1
-            };
-
-            if(needMoreInfo) {
-                o.needMoreInfo = 1;
+            if(account.verificationCode == url.code) {
+                verifyGood = true;
             }
             else {
-                o.needMoreInfo = 0;
+                verifyGood = false;
             }
-
-            glob = new lib.cfmumps.Global("geodigraph", ["accounts", url.email]);
-            glob.setObject(o);
-            glob.close();
-
-            verifyGood = true;
-        }
-        else {
-            verifyGood = false;
-        }
         </cfscript>
-        <div class="middle-box text-center loginscreen animated fadeInDown">
-            <div>
+            <div class="middle-box text-center loginscreen animated fadeInDown">
                 <div>
-
-                    <h1 class="logo-name"><img src="img/login-header.png"></h1>
-
-                </div>
-                <cfif verifyGood>                    
-                    <cfif needMoreInfo>
-
-                        <h3>Set Up Account</h3>
-                        <p>Your account has been verified. Please fill out this form to complete the account setup process.</p>
-
-                        <p><strong>You must complete this step before leaving this page. If you close this page, you will lose access to your account.</strong></p>
+                    <div>
+                        <h1 class="logo-name"><img src="img/login-header.png"></h1>
+                    </div>
+                    <cfif verifyGood>                    
+                        <h3>Verify Account</h3>
+                        <p>Verify your account by completing any missing fields and then clicking "Verify Account".</p>
 
                         <form class="m-t" role="form" action="verify.cfm"  method="post">
                             <cfoutput>
                                 <input type="hidden" name="email" value="#account.email#">
+                                <input type="hidden" name="verifyCode" value="#url.code#">
                             </cfoutput>
                             <cfif account.passwordHash EQ "">
                                 <div class="form-group">
@@ -130,37 +95,33 @@
                                     <input type="text" class="form-control" placeholder="ZIP Code" required="" name="zip">
                                 </div>
                             </cfif>
-                                                        
-                            <button type="submit" class="btn btn-primary block full-width m-b" name="submit">Set Up Account</button>
+
+                            <button type="submit" class="btn btn-primary block full-width m-b" name="submit">Verify Account</button>
 
                             <p class="text-muted text-center"><small>Already have an account?</small></p>
                             <a class="btn btn-sm btn-white btn-block" href="login.cfm">Login</a>
-                        </form>
+                        </form>                    
                     <cfelse>
-                        <cflocation url="login.cfm">
+                        <h3>Invalid verification code</h3>
+                        <p>Please try again.</p>
                     </cfif>
-                <cfelse>
-                    <h3>Invalid verification code</h3>
-                    <p>Please try again.</p>
-                </cfif>
-                <p class="m-t"> <small>Copyright &copy; 2018 Coherent Logic Development LLC</small> </p>
+                    <p class="m-t"> <small>Copyright &copy; 2018 Coherent Logic Development LLC</small> </p>
+                </div>
             </div>
-        </div>
 
-        <!-- Mainly scripts -->
-        <script src="js/jquery-3.1.1.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <!-- iCheck -->
-        <script src="js/plugins/iCheck/icheck.min.js"></script>
-        <script>
-            $(document).ready(function(){
-                $('.i-checks').iCheck({
-                    checkboxClass: 'icheckbox_square-green',
-                    radioClass: 'iradio_square-green',
+            <!-- Mainly scripts -->
+            <script src="js/jquery-3.1.1.min.js"></script>
+            <script src="js/bootstrap.min.js"></script>
+            <!-- iCheck -->
+            <script src="js/plugins/iCheck/icheck.min.js"></script>
+            <script>
+                $(document).ready(function(){
+                    $('.i-checks').iCheck({
+                        checkboxClass: 'icheckbox_square-green',
+                        radioClass: 'iradio_square-green',
+                    });
                 });
-            });
-        </script>
-    </cfif> 
-</body>
-
+            </script>
+        </cfif> 
+    </body>
 </html>

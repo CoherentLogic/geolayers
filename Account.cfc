@@ -371,6 +371,7 @@ component displayname=Account output=false extends="Util" {
         glob.setObject(accountStruct);
 
         this.expandTokenPool(10);
+        this.addDefaultLayers();
 
         module template="/modules/send_email.cfm" caption="Please verify your e-mail address" message="Please click on the link to verify your e-mail address." link="https://maps.geodigraph.com/verify.cfm?email=#this.email#&code=#this.verificationCode#" recipient=this.email;
 
