@@ -1,3 +1,4 @@
+<cftry>
 <cfscript>
     layers = session.account.layers();
 </cfscript>
@@ -95,3 +96,13 @@
         </table>
     </div>
 </cfif>
+<cfcatch type="any">
+    <cfoutput>
+        #cfcatch.message#<br>
+        #cfcatch.detail#<br>
+    </cfoutput>
+    <cfdump var="#layers#">
+    <cfdump var="#session#">
+
+</cfcatch>
+</cftry>

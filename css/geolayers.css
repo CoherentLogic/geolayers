@@ -80,3 +80,8 @@
     display:inline-block;
     color: #000000;
 }
+
+.property-key {
+    font-weight: bold;
+    background-color: #efefef;
+}

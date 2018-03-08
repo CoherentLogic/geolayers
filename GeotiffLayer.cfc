@@ -38,13 +38,19 @@ component displayname="GeotiffLayer" extends="Layer" {
             super.addNumericAttribute("tileTokens", tileTokens);
             super.addNumericAttribute("imageTokens", imageTokens);
 
-            var xmlDoc = xmlParse(fileRead("/pool/tiles/#arguments.id#/tilemapresource.xml"));
-            var bbox = xmlDoc.TileMap.BoundingBox.XmlAttributes;
+            try {
+                var xmlDoc = xmlParse(fileRead("/pool/tiles/#arguments.id#/tilemapresource.xml"));
+                var bbox = xmlDoc.TileMap.BoundingBox.XmlAttributes;
 
-            super.addStringAttribute("maxx", bbox.maxx);
-            super.addStringAttribute("maxy", bbox.maxy);
-            super.addStringAttribute("minx", bbox.minx);
-            super.addStringAttribute("miny", bbox.miny);
+                super.addStringAttribute("maxx", bbox.maxx);
+                super.addStringAttribute("maxy", bbox.maxy);
+                super.addStringAttribute("minx", bbox.minx);
+                super.addStringAttribute("miny", bbox.miny);
+                super.addStringAttribute("srs", xmlDoc.TileMap.SRS.XmlText);
+            }
+            catch (any ex) {
+                writeLog(ex.message);
+            }   
             
         }
 

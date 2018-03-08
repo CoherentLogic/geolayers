@@ -38,7 +38,7 @@ component extends="Util" {
     private struct function get(required string id)
     {
         var mumps = new lib.cfmumps.Mumps();
-        mumps.open();
+        mumps.open();        
 
         if(mumps.data("geodigraph", ["layers", arguments.id]).defined) {    
 
@@ -55,12 +55,29 @@ component extends="Util" {
                 }
 
                 layer.created = lcase(friendlyDate(layer.timestamp));
+                layer.tokenSize = mumps.get("geodigraph", ["tokenSize"]);
+
+                if(mumps.data("geodigraph", ["permissions", "layer", "global", arguments.id]).defined) {
+                    layer.public = true;
+                }
+                else {
+                    layer.public = false;
+                }
+
+                if(mumps.data("geodigraph", ["defaultLayers", arguments.id]).defined) {
+                    layer.default = true;
+                }
+                else {
+                    layer.default = false;
+                }
+
+                layer.shares = sharedEmails;
+
 
                 return {
                     success: true,
                     message: "",
-                    layer: layer,
-                    shares: sharedEmails
+                    layer: layer,                    
                 };
             }
             catch (any ex) {

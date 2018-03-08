@@ -16,6 +16,10 @@ component displayname="Util" {
             return "About an hour ago";
         }
 
+        if(datediff("h", t, n) == 1) {
+            return "About an hour ago";
+        }
+
         if(datediff("h", t, n) > 1 && datediff("h", t, n) < 24) {
             return datediff("h", t, n) & " hours ago";
         }
@@ -27,6 +31,9 @@ component displayname="Util" {
         if(datediff("d", t, n) > 1) {
             return datediff("d", t, n) & " days ago";
         }
+
+        return datediff("h", t, n);
+
     }
 
     public void function audit(required string logId, required string message)

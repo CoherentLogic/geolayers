@@ -223,6 +223,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script> --->
 <script src="js/leaflet-measure.js"></script>
 
+<!-- ChartJS-->
+<script src="js/plugins/chartJs/Chart.min.js"></script>
+
 <!-- Angular -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 

@@ -651,6 +651,8 @@ function viewLayer(id)
 
         let layerType = "";
 
+        $("#vl-initial-tab").trigger('click');
+
         switch(data.renderer) {
             case 'geotiff':
                 layerType = '<i class="fa fa-picture-o"></i> GeoTIFF Imagery';
@@ -659,6 +661,8 @@ function viewLayer(id)
                 $("#vl-tab-geography").show();
                 $("#vl-tab-sharing").show();
                 $("#vl-tab-storage").show();
+
+                $("#vl-original-image").attr("href", "/pool/inbound/staging/" + id + ".tif");
 
                 break;
             case 'base':
@@ -680,24 +684,99 @@ function viewLayer(id)
             zoomRange = data.minZoom + "-" + data.maxZoom;
         }
 
-        $("#vl-layer-name").html(data.name);
-        $("#vl-layer-type").html(layerType);
+        $(".vl-layer-name").html(data.name);
+        $(".vl-layer-type").html(layerType);
         $("#vl-layer-timestamp").html(data.created);
         $("#vl-layer-zoomrange").html(zoomRange);
         $("#vl-layer-attribution").html(data.attribution);
         $("#vl-layer-copyright").html(data.copyright || "None");
 
-        let min = L.latLng(data.miny, data.minx);
-        let max = L.latLng(data.maxy, data.maxx);
-        let bounds = L.latLngBounds(min, max);
-        let centroid = bounds.getCenter();
+        if(data.renderer == "geotiff") {
+            let min = L.latLng(data.miny, data.minx);
+            let max = L.latLng(data.maxy, data.maxx);
+            let bounds = L.latLngBounds(min, max);
+            let centroid = bounds.getCenter();
+
+            let srs = data.srs.split(":");
+
+            let provider = srs[0];
+            let code = srs[1];
+
+            let srsVal = "";
+            if(provider === "EPSG") {
+                srsVal = '<a href="https://epsg.io/' + code + '" target="_blank">' + data.srs + '</a>';
+            }
+            else {
+                srsVal = '<a href="http://spatialreference.org/ref/' + provider + '/' + code + '" target="_blank">' + data.srs + '</a>';
+            }
+
+            $("#vl-layer-srs").html(srsVal);
+            $("#vl-layer-nw").html(data.miny + ", " + data.minx);
+            $("#vl-layer-se").html(data.maxy + ", " + data.maxx);        
+            $("#vl-layer-centroid").html(centroid.lat + ", " + centroid.lng);
 
 
-        $("#vl-layer-nw").html(data.minx + ", " + data.miny);
-        $("#vl-layer-se").html(data.maxx + ", " + data.maxy);        
-        $("#vl-layer-centroid").html(centroid.lng + ", " + centroid.lat);
 
-        $("#vl-tile-thumbnail").attr("src", "/pool/thumbnails/" + id + ".jpg");
+            $("#vl-tile-thumbnail").attr("src", "/pool/thumbnails/" + id + ".jpg");
+
+            let imageTokens = parseInt(data.imageTokens);
+            let tileTokens = parseInt(data.tileTokens);
+            let totalTokens = imageTokens + tileTokens;
+            let tokenSize = parseInt(data.tokenSize);
+
+            let imageMiB = (imageTokens * tokenSize) / 1048576;
+            let tileMiB = (tileTokens * tokenSize) / 1048576;
+            let totalMiB = (totalTokens * tokenSize) / 1048576;
+
+
+            $("#vl-image-tokens").html(imageTokens + " tokens/" + imageMiB + " MiB");
+            $("#vl-tile-tokens").html(tileTokens + " tokens/" + tileMiB + " MiB");
+            $("#vl-total-tokens").html(totalTokens + " tokens/" + totalMiB + " MiB");
+
+            let chartData = {
+                labels: ["Original Image", "Tileset"],
+                datasets: [{
+                    data: [data.imageTokens, data.tileTokens],
+                    backgroundColor: ["#a3e1d4", "#b5b8cf"]
+                }]
+            };
+
+            let ctx = document.getElementById("vl-storage-chart").getContext("2d");
+            new Chart(ctx, {type: 'doughnut', data: chartData, options: {responsive: true}});
+        }        
+
+        if(data.public) {
+            $("#vl-layer-public").html("Yes");
+        }
+        else {
+            $("#vl-layer-public").html("No");
+        }
+
+        if(data.default) {
+            $("#vl-layer-default").html("Yes");
+        }
+        else {
+            $("#vl-layer-default").html("No");
+        }
+
+        $("#vl-shares-container").html('<h3>Shared With</h3><ul id="vl-shares"></ul>');
+
+        for(index in data.shares) {
+            share = data.shares[index];
+
+            let account = new Account(share);
+            account.get().then(function(account) {
+                if(account.name !== " ") {
+                    $("#vl-shares").append("<li>" + account.name + "</li>");
+                }
+                else {
+                    $("#vl-shares").append("<li>" + account.email + "</li>");
+                }
+            },
+            function(error) {
+
+            });
+        }
 
         let contributor = new Account(data.contributor);
 

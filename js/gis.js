@@ -12,7 +12,7 @@ function initializeGis(opts)
         
 
         for(id in writeBackQueue) {
-            console.log("writeback: dequeueing " + id + " (writeback url = '" + writeBackQueue[id] + "')");
+            console.log("debouncing " + id + " (writeback url = '" + writeBackQueue[id] + "')");
 
             $.get(writeBackQueue[id], function() {
                 writeBackDequeueing = true;
