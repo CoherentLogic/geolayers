@@ -627,8 +627,7 @@ function editProfile()
         uploadHandler: "dialogs/edit_profile_submit.cfm",
         progressBarId: "ep-picture-progress",
         timeout: 999999,
-        success: function(data) {
-            console.log(data);
+        success: function(data) {            
             $("#ep-picture").attr("src", "");
             $("#sb-user-picture").attr("src", "");
             $("#ep-picture").attr("src", data.newPicture);
@@ -637,6 +636,12 @@ function editProfile()
         error: function(error) {
             console.log(error);
         }
+    });
+
+
+    $.get("/dialogs/pld.cfm", function(data) {
+ 
+        $("#ep-pld").html(data);
     });
 
 
@@ -910,5 +915,31 @@ function editLayer(id)
         else {
             alert(data.message);
         }
+    });
+}
+
+function pldShow(id) 
+{
+    $.get("/api/pld/showlayer/" + id, (data) => {
+
+        if(data.success) {
+            $.get("/dialogs/pld.cfm", function(result) {
+                $("#ep-pld").html(result);
+            });
+        }
+
+    });
+}
+
+function pldHide(id)
+{
+    $.get("/api/pld/hidelayer/" + id, (data) => {
+
+        if(data.success) {
+            $.get("/dialogs/pld.cfm", function(result) {
+                $("#ep-pld").html(result);
+            });
+        }
+
     });
 }

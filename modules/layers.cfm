@@ -49,47 +49,49 @@
                     </cfif>
                     <cfset opacity = layers[id].properties.opacity & "%">
                     <cfoutput>
-                        <tr id="lc_#id#">
-                            <td>
-                                <i class="fa #icon#"></i>
-                            </td>
-                            <td>
-                                <cfif layer.ready GT 0>
-                                    <input type="checkbox" checked="checked" class="i-checks layer-shown" id="shown_#id#">
-                                <cfelse>
-                                    <input type="checkbox" class="i-checks layer-shown" id="shown_#id#">
-                                </cfif>
-                            </td>
-                            
-                            <cfif layer.renderer NEQ "base">
-                                <cfif layer.ready GT 0>
-                                    <td><a href="##" class="layer-center">#layer.name#</a></td>
-                                <cfelse>
-                                    <td colspan="4">#layer.name# (#trim(layers[id].object.getStatus())#)</td>
-                                </cfif>
-                            <cfelse>
-                                    <td>#layer.name#</td>
-                            </cfif>
-                            
-                            <cfif layer.ready GT 0>
+                        <cfif !isDefined("layers[id].properties.hidden")>
+                            <tr id="lc_#id#">
                                 <td>
-                                    <a href="##"><i class="fa fa-circle-o opacity-down"></i></a>                                
-                                    <span class="text-muted small opacity-display" id="opacity_#id#">#opacity#</span>
-                                    <a href="##"><i class="fa fa-circle opacity-up"></i></a>                                
-                                    
+                                    <i class="fa #icon#"></i>
                                 </td>
                                 <td>
-                                    <a href="##"><i class="fa fa-chevron-down layer-down"></i></a>
-                                    <a href="##"><i class="fa fa-chevron-up layer-up"></i></a>
-                                </td>   
-                                <td>
-                                    <cfif layers[id].layer.contributor EQ session.account.email>
-                                        <a  href="##" class="edit-layer"><i class="fa fa-edit"></i></a>&nbsp;
-                                    </cfif>  
-                                    <a href="##" class="view-layer"><i class="fa fa-info-circle"></i></a>                                 
-                                </td>                                                        
-                            </cfif>
-                        </tr>
+                                    <cfif layer.ready GT 0>
+                                        <input type="checkbox" checked="checked" class="i-checks layer-shown" id="shown_#id#">
+                                    <cfelse>
+                                        <input type="checkbox" class="i-checks layer-shown" id="shown_#id#">
+                                    </cfif>
+                                </td>
+                                
+                                <cfif layer.renderer NEQ "base">
+                                    <cfif layer.ready GT 0>
+                                        <td><a href="##" class="layer-center">#layer.name#</a></td>
+                                    <cfelse>
+                                        <td colspan="4">#layer.name# (#trim(layers[id].object.getStatus())#)</td>
+                                    </cfif>
+                                <cfelse>
+                                        <td>#layer.name#</td>
+                                </cfif>
+                                
+                                <cfif layer.ready GT 0>
+                                    <td>
+                                        <a href="##"><i class="fa fa-circle-o opacity-down"></i></a>                                
+                                        <span class="text-muted small opacity-display" id="opacity_#id#">#opacity#</span>
+                                        <a href="##"><i class="fa fa-circle opacity-up"></i></a>                                
+                                        
+                                    </td>
+                                    <td>
+                                        <a href="##"><i class="fa fa-chevron-down layer-down"></i></a>
+                                        <a href="##"><i class="fa fa-chevron-up layer-up"></i></a>
+                                    </td>   
+                                    <td>
+                                        <cfif layers[id].layer.contributor EQ session.account.email>
+                                            <a  href="##" class="edit-layer"><i class="fa fa-edit"></i></a>&nbsp;
+                                        </cfif>  
+                                        <a href="##" class="view-layer"><i class="fa fa-info-circle"></i></a>                                 
+                                    </td>                                                        
+                                </cfif>
+                            </tr>
+                        </cfif>
                     </cfoutput>
                 </cfloop>
             </tbody>

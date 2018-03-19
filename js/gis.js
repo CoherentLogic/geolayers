@@ -54,52 +54,54 @@ function initializeLayers(m) {
                 //TODO: parcel layers
             }
             else {
-                switch(layers[id].layer.renderer) {
-                    case 'base':
-                        l.url = layers[id].layer.url;
-                        l.tms = false;                    
-                        break;
-                    case 'geotiff':
-                        console.log(m.opts.baseUrl);                        
-                        l.url = 'https://maps.geodigraph.com' + m.opts.baseUrl + '/pool/tiles/' + id + '/{z}/{x}/{y}.png';
-                        l.tms = true;
+                if(!layers[id].properties.hidden) {
+                    switch(layers[id].layer.renderer) {
+                        case 'base':
+                            l.url = layers[id].layer.url;
+                            l.tms = false;                    
+                            break;
+                        case 'geotiff':
+                            console.log(m.opts.baseUrl);                        
+                            l.url = 'https://maps.geodigraph.com' + m.opts.baseUrl + '/pool/tiles/' + id + '/{z}/{x}/{y}.png';
+                            l.tms = true;
 
-                        let minx = layers[id].layer.minx;
-                        let maxx = layers[id].layer.maxx;
-                        let miny = layers[id].layer.miny;
-                        let maxy = layers[id].layer.maxy;
+                            let minx = layers[id].layer.minx;
+                            let maxx = layers[id].layer.maxx;
+                            let miny = layers[id].layer.miny;
+                            let maxy = layers[id].layer.maxy;
 
-                        let min = L.latLng(miny, minx);
-                        let max = L.latLng(maxy, maxx);
+                            let min = L.latLng(miny, minx);
+                            let max = L.latLng(maxy, maxx);
 
-                        l.bounds = L.latLngBounds(min, max);
+                            l.bounds = L.latLngBounds(min, max);
 
-                        var bounds = l.bounds;
+                            var bounds = l.bounds;
 
-                        break;                    
+                            break;                    
+                    }
+
+                    opacity = layers[id].properties.opacity;
+                    l.opacity = opacityPctToDecimal(opacity);
+
+                    l.id = id;
+                    l.attribution = layers[id].layer.attribution || "&copy; Geodigraph";
+                    l.copyright = layers[id].layer.copyright || "";
+                    l.minZoom = layers[id].layer.minZoom || 9;
+                    l.maxZoom = layers[id].layer.maxZoom || 23; 
+                    l.errorTileUrl = "https://geolayers.geodigraph.com/img/no_tile.png";
+
+                    m.layers[id] = {
+                        bounds: bounds,
+                        opacity: opacity,
+                        prevOpacity: opacity,
+                        leafletLayer: L.tileLayer(l.url, l)
+                    };
+
+                    
+                    m.layers[id].leafletLayer.addTo(map.leafletMap);
+                   
+                    m.layers[id].leafletLayer.setZIndex(layers[id].properties.zIndex);
                 }
-
-                opacity = layers[id].properties.opacity;
-                l.opacity = opacityPctToDecimal(opacity);
-
-                l.id = id;
-                l.attribution = layers[id].layer.attribution || "&copy; Geodigraph";
-                l.copyright = layers[id].layer.copyright || "";
-                l.minZoom = layers[id].layer.minZoom || 9;
-                l.maxZoom = layers[id].layer.maxZoom || 23; 
-                l.errorTileUrl = "https://geolayers.geodigraph.com/img/no_tile.png";
-
-                m.layers[id] = {
-                    bounds: bounds,
-                    opacity: opacity,
-                    prevOpacity: opacity,
-                    leafletLayer: L.tileLayer(l.url, l)
-                };
-
-                
-                m.layers[id].leafletLayer.addTo(map.leafletMap);
-               
-                m.layers[id].leafletLayer.setZIndex(layers[id].properties.zIndex);
                 
             }
 

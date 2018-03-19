@@ -1,5 +1,83 @@
 component extends="Util" {
 
+    remote struct function showlayer(required string id) returnformat="JSON"
+    {
+        if(!session.loggedIn) {
+            return {
+                success: false,
+                message: "Not logged in"
+            };
+        }
+
+        
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        var subs = ["accounts", session.account.email, "layers", arguments.id, "hidden"];
+
+        if(mumps.data("geodigraph", ["accounts", session.account.email, "layers", arguments.id]).hasSubscripts) {
+
+            mumps.kill("geodigraph", subs);
+
+            session.account.setUiRefresh();
+
+            mumps.close();
+
+            return {
+                success: true,
+                message: "Layer shown"
+            };
+
+        }
+        else {
+            return {
+                success: false,
+                message: "Layer does not exist in user's Personal Layer Display"
+            };
+        }
+
+    }
+
+    remote struct function hidelayer(required string id) returnformat="JSON"
+    {
+        if(!session.loggedIn) {
+            return {
+                success: false,
+                message: "Not logged in"
+            };
+        }
+
+        
+        var mumps = new lib.cfmumps.Mumps();
+        mumps.open();
+
+        var subs = ["accounts", session.account.email, "layers", arguments.id, "hidden"];
+
+        if(mumps.data("geodigraph", ["accounts", session.account.email, "layers", arguments.id]).hasSubscripts) {
+
+            mumps.set("geodigraph", subs, "1");
+
+            session.account.setUiRefresh();
+
+            mumps.close();
+
+            return {
+                success: true,
+                message: "Layer hidden"
+            };
+
+        }
+        else {
+            return {
+                success: false,
+                message: "Layer does not exist in user's Personal Layer Display"
+            };
+        }
+
+    }
+
+ 
+
     remote struct function layer(required string id) returnformat="JSON"
     {
         if(!session.loggedIn) {
