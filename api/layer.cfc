@@ -30,6 +30,9 @@ component extends="Util" {
 
         }
         else {
+
+            mumps.close();
+
             return {
                 success: false,
                 message: "Layer does not exist in user's Personal Layer Display"
@@ -68,6 +71,9 @@ component extends="Util" {
 
         }
         else {
+
+            mumps.close();
+
             return {
                 success: false,
                 message: "Layer does not exist in user's Personal Layer Display"

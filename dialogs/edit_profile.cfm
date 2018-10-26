@@ -45,8 +45,8 @@
                         </div>
                         <div id="ep-layers" class="tab-pane">
                             <div class="panel-body">
-                                <div id="ep-pld">
-                                    abcdefg
+                                <div id="ep-pld" style="height: 200px;">
+                                   
                                 </div>                                
                             </div>
                         </div>

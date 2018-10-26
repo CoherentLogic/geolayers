@@ -23,8 +23,13 @@ component {
             else {
                 var user = glob.getObject();
 
-                var passwordHash = hash(form.password, "SHA-256");
-
+                if(!isDefined("form.hashed")) {
+                    var passwordHash = hash(form.password, "SHA-256");
+                }
+                else {
+                    var passwordHash = form.password;
+                }
+                
                 if(!user.verified) {
                     return invalidCred;
                 }

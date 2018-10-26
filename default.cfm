@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Geodigraph GIS 2018</title>
+    <title>Geodigraph MAPS</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -117,7 +117,7 @@
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
-                            <span class="m-r-sm text-muted welcome-message">Welcome to Geodigraph GIS 2018!</span>
+                            <span class="m-r-sm text-muted welcome-message">Welcome to Geodigraph MAPS</span>
                         </li>
                         
                         <!---

@@ -33,8 +33,8 @@
 
             user.addDefaultLayers();
             
-            addUserToCompany(user.email, user.company);
-            setUserCompany(user.email, user.company); 
+            //addUserToCompany(user.email, user.company);
+            //setUserCompany(user.email, user.company); 
             
         </cfscript> 
 

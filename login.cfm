@@ -6,13 +6,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Geodigraph GIS 2018 | Login</title>
+    <title>Geodigraph MAPS | Login</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
 
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="img/geodigraph_icon.png">
 
 </head>
 
@@ -81,7 +83,7 @@
                     <h1 class="logo-name"><img src="img/login-header.png"></h1>
 
                 </div>
-                <h3>Geodigraph GIS 2018</h3>
+                <h3>Geodigraph MAPS</h3>
                 
                 <span style="color:red;"><cfoutput>#errorMessage#</cfoutput></span>
                 
