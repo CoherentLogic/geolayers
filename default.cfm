@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Geodigraph MAPS</title>
+    <title>Geodigraph Model</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -117,7 +117,7 @@
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
-                            <span class="m-r-sm text-muted welcome-message">Welcome to Geodigraph MAPS</span>
+                            <span class="m-r-sm text-muted welcome-message">Welcome to Geodigraph Model</span>
                         </li>
                         
                         <!---
@@ -215,7 +215,7 @@
 
 
 <!-- uuid -->
-<script src="https://wzrd.in/standalone/uuid%2Fv1@latest"></script>
+<script src="https://cdn.rawgit.com/jackens/uuidv1/master/uuidv1.js"></script>
 
 <!-- Leaflet stuff -->
 <script src="js/leaflet.js"></script>

@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Geodigraph MAPS | Login</title>
+    <title>Geodigraph Model | Login</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -83,7 +83,7 @@
                     <h1 class="logo-name"><img src="img/login-header.png"></h1>
 
                 </div>
-                <h3>Geodigraph MAPS</h3>
+                <h3>Geodigraph Model</h3>
                 
                 <span style="color:red;"><cfoutput>#errorMessage#</cfoutput></span>
                 
